@@ -5,7 +5,71 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @layer base {
+  /* ── Light theme (default) ── */
   :root {
+    --background: 0 0% 98%;
+    --foreground: 220 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+
+    --primary: 142 60% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 220 12% 40%;
+
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 10% 42%;
+
+    --accent: 38 80% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 87%;
+    --input: 220 13% 90%;
+    --ring: 142 60% 38%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 14% 96%;
+    --sidebar-foreground: 220 15% 15%;
+    --sidebar-primary: 142 60% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 220 12% 40%;
+    --sidebar-border: 220 13% 87%;
+    --sidebar-ring: 142 60% 38%;
+
+    /* KDS station colors — darkened for light bg contrast */
+    --kds-queue: 220 14% 92%;
+    --kds-prep: 199 80% 42%;
+    --kds-grill: 30 85% 46%;
+    --kds-assembly: 280 55% 48%;
+    --kds-done: 142 60% 38%;
+    --kds-alert: 0 72% 48%;
+    --kds-timer-ok: 142 60% 38%;
+    --kds-timer-warn: 30 85% 46%;
+    --kds-timer-critical: 0 72% 48%;
+
+    /* Legacy Gas Town tokens */
+    --terminal-green: 142 60% 38%;
+    --terminal-amber: 30 85% 46%;
+    --terminal-red: 0 72% 48%;
+    --terminal-cyan: 199 80% 42%;
+    --terminal-dim: 220 10% 55%;
+    --glow-green: 0 0 8px hsl(142 60% 38% / 0.2);
+    --glow-amber: 0 0 8px hsl(30 85% 46% / 0.2);
+    --glow-red: 0 0 8px hsl(0 72% 48% / 0.2);
+  }
+
+  /* ── Dark theme ── */
+  .dark {
     --background: 220 15% 8%;
     --foreground: 210 20% 90%;
 
@@ -33,8 +97,6 @@
     --border: 220 12% 20%;
     --input: 220 12% 16%;
     --ring: 142 70% 52%;
-
-    --radius: 0.5rem;
 
     --sidebar-background: 220 15% 10%;
     --sidebar-foreground: 210 20% 90%;
@@ -65,28 +127,6 @@
     --glow-green: 0 0 12px hsl(142 70% 52% / 0.4);
     --glow-amber: 0 0 12px hsl(38 90% 55% / 0.4);
     --glow-red: 0 0 12px hsl(0 72% 51% / 0.4);
-  }
-
-  .dark {
-    --background: 220 15% 8%;
-    --foreground: 210 20% 90%;
-    --card: 220 15% 12%;
-    --card-foreground: 210 20% 90%;
-    --popover: 220 15% 12%;
-    --popover-foreground: 210 20% 90%;
-    --primary: 142 70% 52%;
-    --primary-foreground: 220 20% 4%;
-    --secondary: 220 12% 16%;
-    --secondary-foreground: 210 15% 75%;
-    --muted: 220 12% 14%;
-    --muted-foreground: 210 10% 50%;
-    --accent: 38 90% 55%;
-    --accent-foreground: 220 20% 4%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 12% 20%;
-    --input: 220 12% 16%;
-    --ring: 142 70% 52%;
   }
 }
 

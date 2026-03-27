@@ -1,9 +1,10 @@
-// KDSHeader — top bar with restaurant branding, line selector, new order, fire all
+// KDSHeader — top bar with restaurant branding, line selector, new order, fire all, theme toggle
 
 import React from 'react';
 import { useGasTown } from '../context/GasTownContext';
 import { RigSelector } from './RigSelector';
 import { CreateBeadForm } from './CreateBeadForm';
+import { ThemeToggle } from './ThemeToggle';
 import { Flame, Zap } from 'lucide-react';
 
 export function KDSHeader() {
@@ -35,6 +36,7 @@ export function KDSHeader() {
       </div>
 
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         <button
           onClick={autoAssignBacklog}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-kds-grill text-primary-foreground text-xs font-bold uppercase tracking-wider hover:bg-kds-grill/90 transition-colors"
