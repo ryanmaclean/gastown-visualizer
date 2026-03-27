@@ -396,12 +396,12 @@ export function TerminalPanel() {
         </button>
       </div>
 
-      {/* Terminal containers */}
+      {/* Terminal containers — use opacity instead of display:none so xterm can measure */}
       {!isCollapsed && (
-        <div className="flex-1 relative">
-          <div ref={logsRef} className={`absolute inset-0 ${activeTab === 'logs' ? '' : 'hidden'}`} />
-          <div ref={inferenceRef} className={`absolute inset-0 ${activeTab === 'inference' ? '' : 'hidden'}`} />
-          <div ref={replRef} className={`absolute inset-0 ${activeTab === 'repl' ? '' : 'hidden'}`} />
+        <div className="flex-1 relative min-h-0">
+          <div ref={logsRef} className={`absolute inset-0 ${activeTab === 'logs' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`} />
+          <div ref={inferenceRef} className={`absolute inset-0 ${activeTab === 'inference' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`} />
+          <div ref={replRef} className={`absolute inset-0 ${activeTab === 'repl' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`} />
         </div>
       )}
     </div>
