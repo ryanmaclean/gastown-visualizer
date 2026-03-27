@@ -183,6 +183,12 @@ class InferenceScheduler {
       if (!engineStats.isLoaded) {
         // Engine not loaded — use mock inference
         await this.mockGenerate(request);
+        // mockGenerate handles completion internally — skip the post-processing below
+        this.clearStallTimer(request.id);
+        this.activeRequest = null;
+        this.updateState();
+        setTimeout(() => this.processNext(), 0);
+        return;
       } else {
         // Real WebLLM inference with token budget
         const output = await webllmEngine.generate(
