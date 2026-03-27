@@ -74,6 +74,9 @@ function GasTownApp() {
         <div className="flex-1 p-4 overflow-hidden">
           <KanbanBoard />
         </div>
+
+        {/* Terminal */}
+        <TerminalPanel />
       </main>
 
       {/* Scanline overlay */}
