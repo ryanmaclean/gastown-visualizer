@@ -51,7 +51,7 @@ const lightTheme = {
   foreground: '220 15% 15%',
   card: '0 0% 100%',
   cardForeground: '220 15% 15%',
-  primary: '142 60% 38%',
+  primary: '142 60% 30%',
   primaryForeground: '0 0% 100%',
   secondary: '220 14% 92%',
   secondaryForeground: '220 12% 40%',
