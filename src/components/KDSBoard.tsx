@@ -5,6 +5,7 @@ import { useEtsTable } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
 import { Bead, BeadStatus } from '../actors/types';
 import { OrderTicket } from './OrderTicket';
+import { ClipboardList, Flame, Wrench, CircleCheckBig } from 'lucide-react';
 
 interface Station {
   key: BeadStatus | 'stalled';
@@ -12,7 +13,7 @@ interface Station {
   sublabel: string;
   headerColor: string;
   borderColor: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 const stations: Station[] = [
@@ -22,7 +23,7 @@ const stations: Station[] = [
     sublabel: 'Awaiting prep',
     headerColor: 'bg-secondary text-secondary-foreground',
     borderColor: 'border-secondary',
-    icon: '📋',
+    icon: <ClipboardList className="w-4 h-4" />,
   },
   {
     key: 'in_progress',
@@ -30,7 +31,7 @@ const stations: Station[] = [
     sublabel: 'Inference active',
     headerColor: 'bg-kds-grill text-primary-foreground',
     borderColor: 'border-kds-grill',
-    icon: '🔥',
+    icon: <Flame className="w-4 h-4" />,
   },
   {
     key: 'refinery',
@@ -38,15 +39,15 @@ const stations: Station[] = [
     sublabel: 'Quality check',
     headerColor: 'bg-kds-assembly text-white',
     borderColor: 'border-kds-assembly',
-    icon: '🔧',
+    icon: <Wrench className="w-4 h-4" />,
   },
   {
     key: 'merged',
-    label: 'SERVED ✓',
+    label: 'SERVED',
     sublabel: 'Complete',
     headerColor: 'bg-kds-done text-primary-foreground',
     borderColor: 'border-kds-done',
-    icon: '✅',
+    icon: <CircleCheckBig className="w-4 h-4" />,
   },
 ];
 
@@ -78,7 +79,7 @@ export function KDSBoard() {
             {/* Station header */}
             <div className={`kds-station-header ${station.headerColor} flex items-center justify-between`}>
               <div className="flex items-center gap-2">
-                <span className="text-base">{station.icon}</span>
+                {station.icon}
                 <div>
                   <div className="text-xs font-bold tracking-widest">{station.label}</div>
                   <div className="text-[10px] opacity-70 font-normal tracking-normal">{station.sublabel}</div>
