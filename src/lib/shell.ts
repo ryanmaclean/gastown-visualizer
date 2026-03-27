@@ -521,7 +521,7 @@ export class GasTownShell {
     if (name === 'history') {
       this.term.writeln(c(`History (${this.history.length}):`, 'bold'));
       this.history.forEach((h, i) => {
-        term.writeln(`  ${c(String(i + 1), 'dim')}  ${h}`);
+        this.term.writeln(`  ${c(String(i + 1), 'dim')}  ${h}`);
       });
       return;
     }
