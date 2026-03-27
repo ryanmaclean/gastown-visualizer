@@ -27,7 +27,7 @@ function GasTownApp() {
     <div className="flex h-screen overflow-hidden bg-background">
       <KDSSidebar />
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
         <KDSHeader />
 
         <div className="flex-1 p-4 overflow-hidden stipple">
