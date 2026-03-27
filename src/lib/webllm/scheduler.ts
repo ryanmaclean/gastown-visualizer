@@ -223,7 +223,7 @@ class InferenceScheduler {
       }
     } catch (e) {
       this.clearStallTimer(request.id);
-      if (request.status !== 'cancelled') {
+      if ((request.status as InferenceStatus) !== 'cancelled') {
         request.status = 'stalled';
         request.onError(e as Error);
         pubsub.broadcast('scheduler:error', { id: request.id, error: e });
