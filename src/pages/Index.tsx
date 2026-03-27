@@ -10,6 +10,7 @@ import { StatsPanel } from '../components/StatsPanel';
 import { RigSelector } from '../components/RigSelector';
 import { CreateBeadForm } from '../components/CreateBeadForm';
 import { Terminal, Play } from 'lucide-react';
+import { TerminalPanel } from '../components/TerminalPanel';
 
 function GasTownApp() {
   const { isReady, autoAssignBacklog } = useGasTown();
