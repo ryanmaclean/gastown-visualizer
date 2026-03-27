@@ -9,7 +9,7 @@ import { Download, Check, Loader2 } from 'lucide-react';
 export function ModelSelector() {
   const stats = useEngineStats();
   const { loadModel } = useGasTown();
-  const [selectedModel, setSelectedModel] = useState<ModelId>(AVAILABLE_MODELS[0].id);
+  const [selectedModel, setSelectedModel] = useState<ModelId>(DEFAULT_MODEL_ID);
   const [error, setError] = useState<string | null>(null);
 
   const handleLoad = async () => {
