@@ -72,6 +72,13 @@ export default {
           done: "hsl(var(--kds-done))",
           alert: "hsl(var(--kds-alert))",
         },
+        status: {
+          todo: "hsl(var(--status-todo))",
+          progress: "hsl(var(--status-progress))",
+          review: "hsl(var(--status-review))",
+          done: "hsl(var(--status-done))",
+          alert: "hsl(var(--status-alert))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
