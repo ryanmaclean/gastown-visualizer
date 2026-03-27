@@ -1,4 +1,4 @@
-// ProjectSidebar — Planify-style sidebar with projects, board views, crew
+// ProjectSidebar — Retro bitmap aesthetic
 
 import React from 'react';
 import { ModelSelector } from './ModelSelector';
@@ -7,13 +7,13 @@ import { MayorPanel } from './MayorPanel';
 import { StatsPanel } from './StatsPanel';
 import {
   LayoutGrid, Columns3, List, CalendarDays,
-  Star, Settings, Users, Cpu
+  Settings, Users, Cpu, CircleDot
 } from 'lucide-react';
 
 const boards = [
-  { id: 'rig_alpha', label: 'Alpha Rig', color: 'bg-primary' },
-  { id: 'rig_beta', label: 'Beta Rig', color: 'bg-status-progress' },
-  { id: 'rig_gamma', label: 'Gamma Rig', color: 'bg-status-review' },
+  { id: 'rig_alpha', label: 'Alpha Rig', letter: 'A' },
+  { id: 'rig_beta', label: 'Beta Rig', letter: 'B' },
+  { id: 'rig_gamma', label: 'Gamma Rig', letter: 'G' },
 ];
 
 const views = [
@@ -24,34 +24,34 @@ const views = [
 
 export function KDSSidebar() {
   return (
-    <aside className="w-64 border-r border-border flex flex-col bg-sidebar-background">
+    <aside className="w-56 border-r border-border flex flex-col bg-sidebar-background">
       {/* Brand */}
-      <div className="px-5 py-4 border-b border-border">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Cpu className="w-4.5 h-4.5 text-primary-foreground" />
+      <div className="px-4 py-4 border-b border-border">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 border border-border bg-primary/10 flex items-center justify-center">
+            <CircleDot className="w-3.5 h-3.5 text-primary" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-foreground leading-none">Gas Town</h1>
-            <span className="text-[11px] text-muted-foreground">Multi-Agent System</span>
+            <h1 className="text-xs font-bold text-foreground leading-none tracking-tight">GAS TOWN</h1>
+            <span className="text-[10px] text-muted-foreground">actor orchestration</span>
           </div>
         </div>
       </div>
 
-      {/* Rigs / Projects */}
+      {/* Rigs */}
       <div className="px-3 py-3 border-b border-border">
-        <span className="px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Your Rigs</span>
-        <div className="mt-2 space-y-0.5">
+        <span className="px-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Rigs</span>
+        <div className="mt-2 space-y-px">
           {boards.map(b => (
             <button
               key={b.id}
-              className="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm text-foreground hover:bg-accent transition-colors group"
+              className="w-full flex items-center gap-2.5 px-2 py-1.5 text-xs text-foreground hover:bg-accent transition-colors group"
             >
-              <span className={`w-5 h-5 rounded-md ${b.color} flex items-center justify-center text-[10px] font-bold text-primary-foreground`}>
-                {b.label.charAt(0)}
+              <span className="w-5 h-5 border border-primary/40 bg-primary/8 flex items-center justify-center text-[9px] font-bold text-primary">
+                {b.letter}
               </span>
               <span className="flex-1 text-left truncate">{b.label}</span>
-              <span className="opacity-0 group-hover:opacity-100 text-muted-foreground">⋮</span>
+              <span className="opacity-0 group-hover:opacity-100 text-muted-foreground text-[10px]">›</span>
             </button>
           ))}
         </div>
@@ -59,61 +59,56 @@ export function KDSSidebar() {
 
       {/* Board Views */}
       <div className="px-3 py-3 border-b border-border">
-        <span className="px-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Board Views</span>
-        <div className="mt-2 space-y-0.5">
+        <span className="px-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Views</span>
+        <div className="mt-2 space-y-px">
           {views.map(v => (
             <button
               key={v.label}
-              className={`w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm transition-colors ${
+              className={`w-full flex items-center gap-2.5 px-2 py-1.5 text-xs transition-colors ${
                 v.active
-                  ? 'bg-accent text-accent-foreground font-medium'
+                  ? 'bg-accent text-accent-foreground border-l-2 border-primary'
                   : 'text-foreground hover:bg-muted'
               }`}
             >
-              <v.icon className="w-4 h-4" />
+              <v.icon className="w-3.5 h-3.5" />
               <span>{v.label}</span>
-              {v.active && <span className="ml-auto text-xs text-muted-foreground">›</span>}
             </button>
           ))}
         </div>
       </div>
 
       {/* Crew & Engine */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-        {/* Engine */}
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
         <div>
-          <div className="flex items-center gap-2 px-2 mb-2">
-            <Cpu className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Engine</span>
+          <div className="flex items-center gap-1.5 px-1 mb-1.5">
+            <Cpu className="w-3 h-3 text-muted-foreground" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engine</span>
           </div>
           <ModelSelector />
         </div>
 
-        {/* Crew */}
-        <div>
-          <div className="flex items-center gap-2 px-2 mb-2">
-            <Users className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Agents</span>
+        <div className="border-t border-border pt-3">
+          <div className="flex items-center gap-1.5 px-1 mb-1.5">
+            <Users className="w-3 h-3 text-muted-foreground" />
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Agents</span>
           </div>
           <PolecatPanel />
         </div>
 
-        {/* Mayor */}
         <div className="border-t border-border pt-3">
           <MayorPanel />
         </div>
 
-        {/* Stats */}
         <div className="border-t border-border pt-3">
           <StatsPanel />
         </div>
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-border">
-        <div className="flex items-center gap-2">
-          <Settings className="w-4 h-4 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">Settings</span>
+      <div className="px-4 py-2.5 border-t border-border">
+        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <Settings className="w-3 h-3" />
+          <span>Settings</span>
         </div>
       </div>
     </aside>
