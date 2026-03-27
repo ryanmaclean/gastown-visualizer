@@ -64,6 +64,14 @@ export default {
           cyan: "hsl(var(--terminal-cyan))",
           dim: "hsl(var(--terminal-dim))",
         },
+        kds: {
+          queue: "hsl(var(--kds-queue))",
+          prep: "hsl(var(--kds-prep))",
+          grill: "hsl(var(--kds-grill))",
+          assembly: "hsl(var(--kds-assembly))",
+          done: "hsl(var(--kds-done))",
+          alert: "hsl(var(--kds-alert))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,20 +80,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
