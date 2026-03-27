@@ -36,6 +36,7 @@ export function KDSHeader() {
       </div>
 
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         <button
           onClick={autoAssignBacklog}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-kds-grill text-primary-foreground text-xs font-bold uppercase tracking-wider hover:bg-kds-grill/90 transition-colors"
