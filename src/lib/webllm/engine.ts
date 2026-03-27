@@ -1,0 +1,164 @@
+// WebLLM Engine wrapper — single MLCEngine instance with streaming support
+
+import type { MLCEngine, InitProgressReport } from '@mlc-ai/web-llm';
+
+export interface EngineStats {
+  modelId: string;
+  loadTimeMs: number;
+  totalTokens: number;
+  avgTokensPerSec: number;
+  isLoaded: boolean;
+  isLoading: boolean;
+  loadProgress: number;
+}
+
+export type LoadProgressCallback = (progress: InitProgressReport) => void;
+
+class WebLLMEngine {
+  private engine: MLCEngine | null = null;
+  private stats: EngineStats = {
+    modelId: '',
+    loadTimeMs: 0,
+    totalTokens: 0,
+    avgTokensPerSec: 0,
+    isLoaded: false,
+    isLoading: false,
+    loadProgress: 0,
+  };
+  private tokenTimings: number[] = [];
+  private onProgressCallbacks: Set<LoadProgressCallback> = new Set();
+  private onStatsChangeCallbacks: Set<(stats: EngineStats) => void> = new Set();
+
+  async loadModel(modelId: string): Promise<void> {
+    if (this.stats.isLoading) return;
+    if (this.stats.isLoaded && this.stats.modelId === modelId) return;
+
+    this.stats = { ...this.stats, isLoading: true, loadProgress: 0, modelId };
+    this.notifyStats();
+
+    try {
+      // Dynamic import to avoid loading WebLLM until needed
+      const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
+
+      const startTime = performance.now();
+
+      this.engine = await CreateMLCEngine(modelId, {
+        initProgressCallback: (progress: InitProgressReport) => {
+          this.stats.loadProgress = progress.progress || 0;
+          this.notifyProgress(progress);
+          this.notifyStats();
+        },
+      });
+
+      const loadTimeMs = performance.now() - startTime;
+
+      this.stats = {
+        ...this.stats,
+        loadTimeMs,
+        isLoaded: true,
+        isLoading: false,
+        loadProgress: 1,
+      };
+      this.notifyStats();
+    } catch (e) {
+      this.stats = { ...this.stats, isLoading: false, isLoaded: false };
+      this.notifyStats();
+      throw e;
+    }
+  }
+
+  async generate(
+    prompt: string,
+    onToken: (token: string) => void,
+    signal?: AbortSignal,
+    maxTokens: number = 512
+  ): Promise<string> {
+    if (!this.engine) throw new Error('Engine not loaded');
+
+    let output = '';
+    let tokenCount = 0;
+    const startTime = performance.now();
+
+    try {
+      const completion = await this.engine.chat.completions.create({
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: maxTokens,
+        stream: true,
+        temperature: 0.7,
+      });
+
+      for await (const chunk of completion) {
+        if (signal?.aborted) break;
+
+        const delta = chunk.choices[0]?.delta?.content;
+        if (delta) {
+          output += delta;
+          tokenCount++;
+          onToken(delta);
+
+          const elapsed = (performance.now() - startTime) / 1000;
+          if (elapsed > 0) {
+            this.tokenTimings.push(tokenCount / elapsed);
+            if (this.tokenTimings.length > 100) this.tokenTimings.shift();
+          }
+        }
+      }
+    } catch (e) {
+      if (signal?.aborted) {
+        // Expected interruption for time-slicing
+      } else {
+        throw e;
+      }
+    }
+
+    this.stats.totalTokens += tokenCount;
+    this.stats.avgTokensPerSec = this.tokenTimings.length > 0
+      ? this.tokenTimings.reduce((a, b) => a + b, 0) / this.tokenTimings.length
+      : 0;
+    this.notifyStats();
+
+    return output;
+  }
+
+  getStats(): EngineStats {
+    return { ...this.stats };
+  }
+
+  onProgress(cb: LoadProgressCallback): () => void {
+    this.onProgressCallbacks.add(cb);
+    return () => this.onProgressCallbacks.delete(cb);
+  }
+
+  onStatsChange(cb: (stats: EngineStats) => void): () => void {
+    this.onStatsChangeCallbacks.add(cb);
+    return () => this.onStatsChangeCallbacks.delete(cb);
+  }
+
+  private notifyProgress(progress: InitProgressReport): void {
+    this.onProgressCallbacks.forEach(cb => cb(progress));
+  }
+
+  private notifyStats(): void {
+    this.onStatsChangeCallbacks.forEach(cb => cb(this.getStats()));
+  }
+
+  async unload(): Promise<void> {
+    if (this.engine) {
+      await this.engine.unload();
+      this.engine = null;
+      this.stats = { ...this.stats, isLoaded: false, modelId: '' };
+      this.notifyStats();
+    }
+  }
+}
+
+export const webllmEngine = new WebLLMEngine();
+
+// Available models
+export const AVAILABLE_MODELS = [
+  { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~400MB', description: 'Fast, lightweight — good for multi-worker' },
+  { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~1GB', description: 'Balanced speed/quality' },
+  { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~2.5GB', description: 'Best quality, slower' },
+] as const;
+
+export type ModelId = typeof AVAILABLE_MODELS[number]['id'];
