@@ -1,13 +1,10 @@
-// BeadCard — Retro bitmap aesthetic with bracket frames, stipple textures
+// BeadCard — Copland OS window-style card with pixel icons
 
 import React, { useState, useEffect } from 'react';
 import { Bead, PolecatState } from '../actors/types';
 import { useEtsLookup } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
-import {
-  ChevronDown, ChevronRight,
-  MessageSquare, Clock, Cpu, Play, AlertTriangle, Zap
-} from 'lucide-react';
+import { AgentIcon } from './CoplandIcons';
 
 function useElapsedTime(startTime: number): string {
   const [elapsed, setElapsed] = useState(0);
@@ -24,23 +21,23 @@ function useElapsedTime(startTime: number): string {
 
 function getBeadTags(bead: Bead): { label: string; variant: string }[] {
   const tags: { label: string; variant: string }[] = [];
-  if (bead.escalated) tags.push({ label: 'urgent', variant: 'urgent' });
-  if (bead.convoyId) tags.push({ label: 'convoy', variant: 'important' });
+  if (bead.escalated) tags.push({ label: 'URGENT', variant: 'urgent' });
+  if (bead.convoyId) tags.push({ label: 'CONVOY', variant: 'important' });
   const title = bead.title.toLowerCase();
   if (title.includes('ui') || title.includes('design') || title.includes('refactor')) {
-    tags.push({ label: 'design', variant: 'design' });
+    tags.push({ label: 'UI', variant: 'design' });
   }
   if (title.includes('auth') || title.includes('api') || title.includes('cache') || title.includes('query') || title.includes('websocket')) {
-    tags.push({ label: 'dev', variant: 'dev' });
+    tags.push({ label: 'DEV', variant: 'dev' });
   }
   return tags;
 }
 
 const tagStyles: Record<string, string> = {
-  urgent: 'border-[hsl(var(--tag-urgent))] text-[hsl(var(--tag-urgent))] bg-[hsl(var(--tag-urgent)/0.06)]',
-  important: 'border-[hsl(var(--tag-important))] text-[hsl(var(--tag-important))] bg-[hsl(var(--tag-important)/0.06)]',
-  design: 'border-[hsl(var(--tag-design))] text-[hsl(var(--tag-design))] bg-[hsl(var(--tag-design)/0.06)]',
-  dev: 'border-muted-foreground text-muted-foreground bg-muted',
+  urgent: 'bg-[hsl(var(--tag-urgent))] text-primary-foreground',
+  important: 'bg-[hsl(var(--tag-important))] text-primary-foreground',
+  design: 'bg-[hsl(var(--tag-design))] text-primary-foreground',
+  dev: 'bg-muted text-muted-foreground copland-raised',
 };
 
 export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
@@ -61,15 +58,16 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
     : 'bg-muted-foreground';
 
   return (
-    <div className="bracket-frame border border-border bg-card hover:border-primary/30 transition-all duration-150 overflow-hidden animate-card-in group">
-      <div className="p-3 space-y-2.5">
+    <div className="copland-raised bg-card overflow-hidden animate-card-in group">
+      {/* Card content */}
+      <div className="p-2.5 space-y-2">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {tags.map((tag, i) => (
               <span
                 key={i}
-                className={`inline-flex items-center text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 border ${tagStyles[tag.variant] || 'border-border text-muted-foreground'}`}
+                className={`inline-flex items-center text-[8px] font-bold tracking-widest px-1.5 py-0.5 ${tagStyles[tag.variant] || 'bg-muted text-muted-foreground'}`}
               >
                 {tag.label}
               </span>
@@ -77,11 +75,11 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           </div>
         )}
 
-        {/* Title & description */}
+        {/* Title */}
         <div>
-          <h4 className="text-xs font-bold text-foreground leading-snug">{bead.title}</h4>
+          <h4 className="text-[11px] font-bold text-foreground leading-snug">{bead.title}</h4>
           {bead.description && (
-            <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-2">
+            <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
               {bead.description}
             </p>
           )}
@@ -89,12 +87,12 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
 
         {/* Progress */}
         {progress > 0 && (
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-[9px] uppercase tracking-wider">
+          <div className="space-y-0.5">
+            <div className="flex items-center justify-between text-[8px] uppercase tracking-wider">
               <span className="text-muted-foreground">progress</span>
               <span className="font-bold text-foreground tabular-nums">{Math.round(progress)}%</span>
             </div>
-            <div className="h-1 bg-muted overflow-hidden">
+            <div className="copland-inset h-2 bg-card overflow-hidden p-px">
               <div
                 className={`h-full ${progressColor} transition-all duration-500`}
                 style={{ width: `${progress}%` }}
@@ -108,14 +106,12 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           <div>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors"
             >
-              {expanded ? <ChevronDown className="w-2.5 h-2.5" /> : <ChevronRight className="w-2.5 h-2.5" />}
-              <MessageSquare className="w-2.5 h-2.5" />
-              output
+              {expanded ? '▾' : '▸'} output
             </button>
             {expanded && (
-              <pre className="mt-1.5 p-2 bg-muted border border-border text-[10px] text-foreground/70 max-h-24 overflow-y-auto whitespace-pre-wrap break-words font-mono">
+              <pre className="mt-1 p-1.5 copland-inset bg-card text-[9px] text-foreground/70 max-h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono">
                 {bead.tokenStream}
                 {bead.status === 'in_progress' && <span className="animate-blink">▌</span>}
               </pre>
@@ -124,43 +120,36 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-0.5">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
             {polecat ? (
-              <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 border border-border bg-background flex items-center justify-center text-[8px] font-bold text-foreground">
-                  {polecat.name.charAt(0)}
+              <div className="flex items-center gap-1">
+                <div className="w-5 h-5 copland-raised bg-background flex items-center justify-center p-0.5">
+                  <AgentIcon name={polecat.name} size={12} />
                 </div>
-                <span className="text-[10px] text-muted-foreground">{polecat.name}</span>
+                <span className="text-[9px] text-muted-foreground">{polecat.name}</span>
                 {bead.status === 'in_progress' && (
-                  <span className="w-1 h-1 bg-primary animate-pulse-glow" />
+                  <span className="w-1.5 h-1.5 bg-primary animate-pulse-glow" />
                 )}
               </div>
             ) : (
-              <div className="w-5 h-5 border border-dashed border-border" />
-            )}
-
-            {bead.tokensGenerated > 0 && (
-              <span className="flex items-center gap-0.5 text-[9px] text-muted-foreground tabular-nums">
-                <Cpu className="w-2.5 h-2.5" /> {bead.tokensGenerated}
-              </span>
+              <div className="w-5 h-5 copland-inset bg-card" />
             )}
           </div>
 
-          <span className="flex items-center gap-0.5 text-[9px] text-muted-foreground tabular-nums">
-            <Clock className="w-2.5 h-2.5" />
-            {timer}
+          <span className="text-[9px] text-muted-foreground tabular-nums font-mono">
+            ⏱{timer}
           </span>
         </div>
       </div>
 
-      {/* Assign action */}
+      {/* Assign action — raised button */}
       {bead.status === 'backlog' && (
         <button
           onClick={() => assignBeadToPolecat(bead.id)}
-          className="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-accent transition-colors flex items-center justify-center gap-1 border-t border-border"
+          className="w-full py-1 text-[9px] font-bold uppercase tracking-wider text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
         >
-          <Play className="w-3 h-3" /> assign agent
+          ▷ Assign Agent
         </button>
       )}
     </div>

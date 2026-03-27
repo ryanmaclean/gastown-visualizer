@@ -1,10 +1,10 @@
-// MayorPanel — escalation queue, directives log
+// MayorPanel — Copland OS style with pixel shield
 
 import React from 'react';
 import { usePubSub } from '../hooks/usePubSub';
 import { useEtsTable } from '../hooks/useEts';
 import { EscalationEvent } from '../actors/types';
-import { Shield, AlertTriangle } from 'lucide-react';
+import { PixelShield } from './CoplandIcons';
 
 export function MayorPanel() {
   const directives = usePubSub<{ text: string; timestamp: number }>('mayor:directive', 20);
@@ -13,28 +13,27 @@ export function MayorPanel() {
   const unresolvedCount = escalations.filter(([, e]) => !e.resolved).length;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Header */}
-      <div className="flex items-center gap-2 px-1">
-        <Shield className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold text-foreground tracking-wide">MAYOR</span>
+      <div className="flex items-center gap-1.5">
+        <PixelShield size={12} />
+        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Mayor</span>
         {unresolvedCount > 0 && (
-          <span className="flex items-center gap-1 text-xs text-destructive font-mono">
-            <AlertTriangle className="w-3 h-3" />
-            {unresolvedCount}
+          <span className="text-[9px] text-destructive font-mono font-bold">
+            ⚠{unresolvedCount}
           </span>
         )}
       </div>
 
       {/* Directives log */}
-      <div className="space-y-1">
-        <span className="text-xs font-mono text-muted-foreground px-1">DIRECTIVES</span>
-        <div className="max-h-48 overflow-y-auto space-y-0.5">
+      <div className="space-y-0.5">
+        <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-wider">Directives</span>
+        <div className="copland-inset bg-card max-h-32 overflow-y-auto p-1">
           {directives.length === 0 && (
-            <p className="text-xs text-muted-foreground/50 px-1 font-mono">Waiting...</p>
+            <p className="text-[9px] text-muted-foreground/50 font-mono">Waiting...</p>
           )}
           {directives.slice().reverse().map((d, i) => (
-            <div key={i} className="text-xs font-mono px-2 py-1 rounded bg-secondary/50 text-foreground/80">
+            <div key={i} className="text-[9px] font-mono px-1 py-0.5 text-foreground/80 hover:bg-primary hover:text-primary-foreground">
               <span className="text-muted-foreground">
                 {new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
@@ -46,14 +45,14 @@ export function MayorPanel() {
 
       {/* Escalation queue */}
       {escalations.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-xs font-mono text-muted-foreground px-1">ESCALATIONS</span>
-          <div className="max-h-32 overflow-y-auto space-y-0.5">
+        <div className="space-y-0.5">
+          <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-wider">Escalations</span>
+          <div className="copland-inset bg-card max-h-24 overflow-y-auto p-1">
             {escalations.slice().reverse().map(([id, e]) => (
               <div
                 key={id}
-                className={`text-xs font-mono px-2 py-1 rounded ${
-                  e.resolved ? 'bg-secondary/30 text-muted-foreground' : 'bg-destructive/10 text-destructive'
+                className={`text-[9px] font-mono px-1 py-0.5 ${
+                  e.resolved ? 'text-muted-foreground' : 'text-destructive'
                 }`}
               >
                 {e.beadId} → {e.resolved ? '✓ resolved' : '⚠ pending'}
