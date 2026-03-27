@@ -2,54 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 @layer base {
-  /* ── Light theme (default) ── */
+  /* ── Light theme (default) — Planify-inspired ── */
   :root {
-    --background: 0 0% 98%;
-    --foreground: 220 15% 15%;
+    --background: 0 0% 97%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 142 60% 30%;
+    --primary: 250 60% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 220 12% 40%;
+    --secondary: 240 5% 93%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 10% 42%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 38 80% 48%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 250 60% 96%;
+    --accent-foreground: 250 60% 45%;
 
-    --destructive: 0 72% 48%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 87%;
-    --input: 220 13% 90%;
-    --ring: 142 60% 38%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 250 60% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 220 14% 96%;
-    --sidebar-foreground: 220 15% 15%;
-    --sidebar-primary: 142 60% 38%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 250 60% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 92%;
-    --sidebar-accent-foreground: 220 12% 40%;
-    --sidebar-border: 220 13% 87%;
-    --sidebar-ring: 142 60% 38%;
+    --sidebar-accent: 250 60% 96%;
+    --sidebar-accent-foreground: 250 60% 45%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 250 60% 55%;
 
-    /* KDS station colors — darkened for light bg contrast */
+    /* Status colors */
+    --status-todo: 220 14% 92%;
+    --status-todo-text: 215 16% 47%;
+    --status-progress: 38 92% 50%;
+    --status-progress-text: 38 92% 38%;
+    --status-review: 280 65% 55%;
+    --status-review-text: 280 65% 42%;
+    --status-done: 142 71% 45%;
+    --status-done-text: 142 71% 30%;
+    --status-alert: 0 84% 60%;
+
+    /* Tag colors */
+    --tag-urgent: 0 84% 60%;
+    --tag-important: 38 92% 50%;
+    --tag-design: 250 60% 55%;
+    --tag-dev: 199 89% 48%;
+
+    /* Legacy KDS tokens (kept for terminal) */
     --kds-queue: 220 14% 92%;
     --kds-prep: 199 80% 42%;
-    --kds-grill: 30 85% 46%;
+    --kds-grill: 38 92% 50%;
     --kds-assembly: 280 55% 48%;
     --kds-done: 142 60% 38%;
     --kds-alert: 0 72% 48%;
@@ -57,7 +74,6 @@
     --kds-timer-warn: 30 85% 46%;
     --kds-timer-critical: 0 72% 48%;
 
-    /* Legacy Gas Town tokens */
     --terminal-green: 142 60% 38%;
     --terminal-amber: 30 85% 46%;
     --terminal-red: 0 72% 48%;
@@ -70,44 +86,58 @@
 
   /* ── Dark theme ── */
   .dark {
-    --background: 220 15% 8%;
-    --foreground: 210 20% 90%;
+    --background: 222 47% 6%;
+    --foreground: 210 20% 92%;
 
-    --card: 220 15% 12%;
-    --card-foreground: 210 20% 90%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 20% 92%;
 
-    --popover: 220 15% 12%;
-    --popover-foreground: 210 20% 90%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 20% 92%;
 
-    --primary: 142 70% 52%;
-    --primary-foreground: 220 20% 4%;
+    --primary: 250 60% 62%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 12% 16%;
+    --secondary: 222 30% 16%;
     --secondary-foreground: 210 15% 75%;
 
-    --muted: 220 12% 14%;
+    --muted: 222 30% 14%;
     --muted-foreground: 210 10% 50%;
 
-    --accent: 38 90% 55%;
-    --accent-foreground: 220 20% 4%;
+    --accent: 250 40% 20%;
+    --accent-foreground: 250 60% 70%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 12% 20%;
-    --input: 220 12% 16%;
-    --ring: 142 70% 52%;
+    --border: 222 20% 18%;
+    --input: 222 20% 18%;
+    --ring: 250 60% 62%;
 
-    --sidebar-background: 220 15% 10%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 142 70% 52%;
-    --sidebar-primary-foreground: 220 20% 4%;
-    --sidebar-accent: 220 12% 16%;
-    --sidebar-accent-foreground: 210 15% 75%;
-    --sidebar-border: 220 12% 20%;
-    --sidebar-ring: 142 70% 52%;
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 250 60% 62%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 250 40% 20%;
+    --sidebar-accent-foreground: 250 60% 70%;
+    --sidebar-border: 222 20% 18%;
+    --sidebar-ring: 250 60% 62%;
 
-    /* KDS station colors */
+    --status-todo: 222 30% 16%;
+    --status-todo-text: 210 10% 55%;
+    --status-progress: 38 90% 55%;
+    --status-progress-text: 38 90% 65%;
+    --status-review: 280 65% 60%;
+    --status-review-text: 280 65% 70%;
+    --status-done: 142 70% 52%;
+    --status-done-text: 142 70% 62%;
+    --status-alert: 0 72% 55%;
+
+    --tag-urgent: 0 72% 55%;
+    --tag-important: 38 90% 55%;
+    --tag-design: 250 60% 62%;
+    --tag-dev: 199 89% 55%;
+
     --kds-queue: 220 15% 14%;
     --kds-prep: 199 89% 48%;
     --kds-grill: 38 90% 55%;
@@ -118,7 +148,6 @@
     --kds-timer-warn: 38 90% 55%;
     --kds-timer-critical: 0 72% 51%;
 
-    /* Legacy Gas Town tokens */
     --terminal-green: 142 70% 52%;
     --terminal-amber: 38 90% 55%;
     --terminal-red: 0 72% 51%;
@@ -137,11 +166,11 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   code, pre, .font-mono {
@@ -162,52 +191,6 @@
     text-shadow: var(--glow-red);
   }
 
-  /* KDS station header strip */
-  .kds-station-header {
-    @apply px-4 py-2.5 text-sm font-bold tracking-wider uppercase;
-  }
-
-  /* Order ticket */
-  .kds-ticket {
-    @apply rounded-lg border-2 overflow-hidden transition-all duration-200;
-  }
-
-  .kds-ticket:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .kds-ticket-header {
-    @apply px-3 py-2 flex items-center justify-between text-xs font-bold;
-  }
-
-  .kds-ticket-body {
-    @apply px-3 py-2.5 bg-card;
-  }
-
-  /* Timer badge */
-  .kds-timer {
-    @apply px-2 py-0.5 rounded-full text-xs font-mono font-bold tabular-nums;
-  }
-
-  /* Bump bar button */
-  .kds-bump {
-    @apply w-full py-2 text-xs font-bold uppercase tracking-wider rounded-b-lg transition-all duration-150;
-    @apply hover:brightness-110 active:scale-[0.98];
-  }
-
-  /* Scanline overlay */
-  .scanline {
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      hsl(210 10% 50% / 0.02) 3px,
-      hsl(210 10% 50% / 0.02) 6px
-    );
-    pointer-events: none;
-  }
-
   @keyframes pulse-glow {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -226,40 +209,31 @@
     animation: blink 1s step-end infinite;
   }
 
-  @keyframes ticket-in {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  .animate-ticket-in {
-    animation: ticket-in 0.3s ease-out;
-  }
-
-  @keyframes station-pulse {
-    0%, 100% { box-shadow: inset 0 0 0 0 transparent; }
-    50% { box-shadow: inset 0 0 20px -8px currentColor; }
-  }
-
-  .animate-station-pulse {
-    animation: station-pulse 3s ease-in-out infinite;
+  .animate-card-in {
+    animation: card-in 0.25s ease-out;
   }
 
   /* Scrollbar styling */
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(220 15% 8%);
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(220 12% 22%);
+    background: hsl(var(--border));
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(220 12% 28%);
+    background: hsl(var(--muted-foreground) / 0.3);
   }
 }
