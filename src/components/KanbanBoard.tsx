@@ -1,7 +1,8 @@
-// KanbanBoard — 4-column board reading from ETS :beads
+// KanbanBoard — 4-column board reading from ETS :beads, filtered by active rig
 
 import React from 'react';
 import { useEtsTable } from '../hooks/useEts';
+import { useGasTown } from '../context/GasTownContext';
 import { Bead, BeadStatus } from '../actors/types';
 import { BeadCard } from './BeadCard';
 
@@ -14,9 +15,13 @@ const columns: { key: BeadStatus; label: string; accent: string }[] = [
 
 export function KanbanBoard() {
   const allBeads = useEtsTable<Bead>('beads');
+  const { activeRigId } = useGasTown();
+
+  // Filter beads by active rig
+  const rigBeads = allBeads.filter(([, b]) => b.rigId === activeRigId);
 
   const beadsByStatus = (status: BeadStatus): Bead[] => {
-    return allBeads
+    return rigBeads
       .filter(([, b]) => b.status === status)
       .map(([, b]) => b)
       .sort((a, b) => b.updatedAt - a.updatedAt);
