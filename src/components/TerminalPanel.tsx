@@ -1,13 +1,13 @@
 // TerminalPanel — xterm.js based terminal with tabs for logs, inference, and REPL
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import '@xterm/xterm/css/xterm.css';
 import { pubsub } from '../lib/otp/pubsub';
-import { ets } from '../lib/otp/ets';
 import { useGasTown } from '../context/GasTownContext';
+import { GasTownShell } from '../lib/shell';
 
 type TabId = 'logs' | 'inference' | 'repl';
 
