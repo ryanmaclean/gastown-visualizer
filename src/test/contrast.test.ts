@@ -1,6 +1,7 @@
-// WCAG AA contrast ratio tests for Copland Platinum light and dark themes
+// WCAG AA contrast ratio tests for all registered themes
 
 import { describe, it, expect } from 'vitest';
+import { themes, type Theme } from '../lib/themes';
 
 function hslToRgb(h: number, s: number, l: number): [number, number, number] {
   s /= 100;
@@ -41,72 +42,31 @@ function checkContrast(fg: string, bg: string): number {
   return contrastRatio(getLuminance(fg), getLuminance(bg));
 }
 
-// Copland Platinum palette from index.css
-const lightTheme = {
-  background: '220 8% 92%',
-  foreground: '220 10% 18%',
-  card: '220 8% 96%',
-  cardForeground: '220 10% 18%',
-  primary: '220 55% 50%',
-  primaryForeground: '0 0% 100%',
-  secondary: '220 6% 88%',
-  secondaryForeground: '220 10% 30%',
-  muted: '220 6% 90%',
-  mutedForeground: '220 8% 32%',
-  destructive: '0 60% 50%',
-  destructiveForeground: '0 0% 100%',
-};
+// Pairs to check: [foreground var, background var, min ratio]
+const contrastPairs: [string, string, number][] = [
+  ['--foreground', '--background', 4.5],
+  ['--card-foreground', '--card', 4.5],
+  ['--primary-foreground', '--primary', 3],
+  ['--secondary-foreground', '--secondary', 4.5],
+  ['--muted-foreground', '--background', 3],
+  ['--destructive-foreground', '--destructive', 3],
+];
 
-const darkTheme = {
-  background: '220 10% 10%',
-  foreground: '220 6% 80%',
-  card: '220 10% 14%',
-  cardForeground: '220 6% 80%',
-  primary: '220 55% 58%',
-  primaryForeground: '220 10% 6%',
-  secondary: '220 10% 18%',
-  secondaryForeground: '220 6% 62%',
-  muted: '220 10% 15%',
-  mutedForeground: '220 6% 45%',
-  destructive: '0 60% 52%',
-  destructiveForeground: '220 6% 95%',
-};
+for (const theme of themes) {
+  for (const modeName of ['light', 'dark'] as const) {
+    const vars = theme.cssVars[modeName];
 
-describe('WCAG AA Contrast — Copland Light', () => {
-  it('foreground on background ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.foreground, lightTheme.background)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('card foreground on card ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.cardForeground, lightTheme.card)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('primary foreground on primary ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.primaryForeground, lightTheme.primary)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('secondary foreground on secondary ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.secondaryForeground, lightTheme.secondary)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('muted foreground on muted ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.mutedForeground, lightTheme.muted)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('destructive foreground on destructive ≥ 4.5:1', () => {
-    expect(checkContrast(lightTheme.destructiveForeground, lightTheme.destructive)).toBeGreaterThanOrEqual(4.5);
-  });
-});
+    describe(`WCAG AA — ${theme.name} (${modeName})`, () => {
+      for (const [fgKey, bgKey, minRatio] of contrastPairs) {
+        const fg = vars[fgKey];
+        const bg = vars[bgKey];
+        if (!fg || !bg) continue;
 
-describe('WCAG AA Contrast — Copland Dark', () => {
-  it('foreground on background ≥ 4.5:1', () => {
-    expect(checkContrast(darkTheme.foreground, darkTheme.background)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('card foreground on card ≥ 4.5:1', () => {
-    expect(checkContrast(darkTheme.cardForeground, darkTheme.card)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('primary foreground on primary ≥ 3:1', () => {
-    expect(checkContrast(darkTheme.primaryForeground, darkTheme.primary)).toBeGreaterThanOrEqual(3);
-  });
-  it('secondary foreground on secondary ≥ 4.5:1', () => {
-    expect(checkContrast(darkTheme.secondaryForeground, darkTheme.secondary)).toBeGreaterThanOrEqual(4.5);
-  });
-  it('muted foreground on background ≥ 3:1', () => {
-    expect(checkContrast(darkTheme.mutedForeground, darkTheme.background)).toBeGreaterThanOrEqual(3);
-  });
-});
+        it(`${fgKey} on ${bgKey} ≥ ${minRatio}:1`, () => {
+          const ratio = checkContrast(fg, bg);
+          expect(ratio).toBeGreaterThanOrEqual(minRatio);
+        });
+      }
+    });
+  }
+}
