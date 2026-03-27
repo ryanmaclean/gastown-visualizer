@@ -154,11 +154,14 @@ class WebLLMEngine {
 
 export const webllmEngine = new WebLLMEngine();
 
-// Available models
+// Available models — Qwen3.5 not yet in WebLLM (issue #778), Qwen3 up to 8B available
 export const AVAILABLE_MODELS = [
   { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~400MB', description: 'Fast, lightweight — good for multi-worker' },
   { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~1GB', description: 'Balanced speed/quality' },
-  { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~2.5GB', description: 'Best quality, slower' },
+  { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~2.5GB', description: 'Good quality, moderate speed' },
+  { id: 'Qwen3-8B-q4f16_1-MLC', name: 'Qwen3 8B', vram: '~5GB', description: 'Best quality — recommended for M1 Max 64GB' },
 ] as const;
+
+export const DEFAULT_MODEL_ID: ModelId = 'Qwen3-8B-q4f16_1-MLC';
 
 export type ModelId = typeof AVAILABLE_MODELS[number]['id'];

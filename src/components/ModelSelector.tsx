@@ -1,7 +1,7 @@
 // ModelSelector — dropdown for WebLLM model selection with progress
 
 import React, { useState } from 'react';
-import { AVAILABLE_MODELS, type ModelId } from '../lib/webllm/engine';
+import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type ModelId } from '../lib/webllm/engine';
 import { useEngineStats } from '../hooks/useScheduler';
 import { useGasTown } from '../context/GasTownContext';
 import { Download, Check, Loader2 } from 'lucide-react';
@@ -9,7 +9,7 @@ import { Download, Check, Loader2 } from 'lucide-react';
 export function ModelSelector() {
   const stats = useEngineStats();
   const { loadModel } = useGasTown();
-  const [selectedModel, setSelectedModel] = useState<ModelId>(AVAILABLE_MODELS[0].id);
+  const [selectedModel, setSelectedModel] = useState<ModelId>(DEFAULT_MODEL_ID);
   const [error, setError] = useState<string | null>(null);
 
   const handleLoad = async () => {
