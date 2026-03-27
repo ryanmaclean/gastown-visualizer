@@ -1,9 +1,7 @@
-// WCAG AA contrast ratio tests for both light and dark themes
-// Tests that key foreground/background pairs meet 4.5:1 for normal text, 3:1 for large text
+// WCAG AA contrast ratio tests for Copland Platinum light and dark themes
 
 import { describe, it, expect } from 'vitest';
 
-// Parse HSL string "H S% L%" → relative luminance
 function hslToRgb(h: number, s: number, l: number): [number, number, number] {
   s /= 100;
   l /= 100;
@@ -39,139 +37,76 @@ function getLuminance(hsl: string): number {
   return relativeLuminance(r, g, b);
 }
 
-function checkContrast(fg: string, bg: string, minRatio: number = 4.5): number {
-  const fgL = getLuminance(fg);
-  const bgL = getLuminance(bg);
-  return contrastRatio(fgL, bgL);
+function checkContrast(fg: string, bg: string): number {
+  return contrastRatio(getLuminance(fg), getLuminance(bg));
 }
 
-// Theme definitions matching index.css
+// Copland Platinum palette from index.css
 const lightTheme = {
-  background: '0 0% 98%',
-  foreground: '220 15% 15%',
-  card: '0 0% 100%',
-  cardForeground: '220 15% 15%',
-  primary: '142 60% 30%',
+  background: '220 8% 92%',
+  foreground: '220 10% 18%',
+  card: '220 8% 96%',
+  cardForeground: '220 10% 18%',
+  primary: '220 55% 50%',
   primaryForeground: '0 0% 100%',
-  secondary: '220 14% 92%',
-  secondaryForeground: '220 12% 40%',
-  muted: '220 14% 94%',
-  mutedForeground: '220 10% 42%',
-  destructive: '0 72% 48%',
+  secondary: '220 6% 88%',
+  secondaryForeground: '220 10% 30%',
+  muted: '220 6% 90%',
+  mutedForeground: '220 6% 48%',
+  destructive: '0 60% 50%',
   destructiveForeground: '0 0% 100%',
-  kdsGrill: '30 85% 46%',
-  kdsDone: '142 60% 38%',
-  kdsAssembly: '280 55% 48%',
-  kdsAlert: '0 72% 48%',
-  kdsPrep: '199 80% 42%',
 };
 
 const darkTheme = {
-  background: '220 15% 8%',
-  foreground: '210 20% 90%',
-  card: '220 15% 12%',
-  cardForeground: '210 20% 90%',
-  primary: '142 70% 52%',
-  primaryForeground: '220 20% 4%',
-  secondary: '220 12% 16%',
-  secondaryForeground: '210 15% 75%',
-  muted: '220 12% 14%',
-  mutedForeground: '210 10% 50%',
-  destructive: '0 72% 51%',
-  destructiveForeground: '210 40% 98%',
-  kdsGrill: '38 90% 55%',
-  kdsDone: '142 70% 52%',
-  kdsAssembly: '280 65% 55%',
-  kdsAlert: '0 72% 51%',
-  kdsPrep: '199 89% 48%',
+  background: '220 10% 10%',
+  foreground: '220 6% 80%',
+  card: '220 10% 14%',
+  cardForeground: '220 6% 80%',
+  primary: '220 55% 58%',
+  primaryForeground: '220 10% 6%',
+  secondary: '220 10% 18%',
+  secondaryForeground: '220 6% 62%',
+  muted: '220 10% 15%',
+  mutedForeground: '220 6% 45%',
+  destructive: '0 60% 52%',
+  destructiveForeground: '220 6% 95%',
 };
 
-describe('WCAG AA Contrast — Light Theme', () => {
+describe('WCAG AA Contrast — Copland Light', () => {
   it('foreground on background ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.foreground, lightTheme.background);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(lightTheme.foreground, lightTheme.background)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('card foreground on card ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.cardForeground, lightTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(lightTheme.cardForeground, lightTheme.card)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('primary foreground on primary ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.primaryForeground, lightTheme.primary);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(lightTheme.primaryForeground, lightTheme.primary)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('secondary foreground on secondary ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.secondaryForeground, lightTheme.secondary);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(lightTheme.secondaryForeground, lightTheme.secondary)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('muted foreground on muted ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.mutedForeground, lightTheme.muted);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(lightTheme.mutedForeground, lightTheme.muted)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('destructive foreground on destructive ≥ 4.5:1', () => {
-    const ratio = checkContrast(lightTheme.destructiveForeground, lightTheme.destructive);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
-  });
-
-  // Large text (3:1) for KDS station colors on white
-  it('kds-grill on white ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(lightTheme.kdsGrill, lightTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  it('kds-done on white ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(lightTheme.kdsDone, lightTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  it('kds-assembly on white ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(lightTheme.kdsAssembly, lightTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  it('kds-alert on white ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(lightTheme.kdsAlert, lightTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
+    expect(checkContrast(lightTheme.destructiveForeground, lightTheme.destructive)).toBeGreaterThanOrEqual(4.5);
   });
 });
 
-describe('WCAG AA Contrast — Dark Theme', () => {
+describe('WCAG AA Contrast — Copland Dark', () => {
   it('foreground on background ≥ 4.5:1', () => {
-    const ratio = checkContrast(darkTheme.foreground, darkTheme.background);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(darkTheme.foreground, darkTheme.background)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('card foreground on card ≥ 4.5:1', () => {
-    const ratio = checkContrast(darkTheme.cardForeground, darkTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(darkTheme.cardForeground, darkTheme.card)).toBeGreaterThanOrEqual(4.5);
   });
-
-  it('primary foreground on primary ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(darkTheme.primaryForeground, darkTheme.primary);
-    expect(ratio).toBeGreaterThanOrEqual(3);
+  it('primary foreground on primary ≥ 3:1', () => {
+    expect(checkContrast(darkTheme.primaryForeground, darkTheme.primary)).toBeGreaterThanOrEqual(3);
   });
-
   it('secondary foreground on secondary ≥ 4.5:1', () => {
-    const ratio = checkContrast(darkTheme.secondaryForeground, darkTheme.secondary);
-    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(checkContrast(darkTheme.secondaryForeground, darkTheme.secondary)).toBeGreaterThanOrEqual(4.5);
   });
-
   it('muted foreground on background ≥ 3:1', () => {
-    const ratio = checkContrast(darkTheme.mutedForeground, darkTheme.background);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  it('kds-grill on card ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(darkTheme.kdsGrill, darkTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
-  });
-
-  it('kds-done on card ≥ 3:1 (large text)', () => {
-    const ratio = checkContrast(darkTheme.kdsDone, darkTheme.card);
-    expect(ratio).toBeGreaterThanOrEqual(3);
+    expect(checkContrast(darkTheme.mutedForeground, darkTheme.background)).toBeGreaterThanOrEqual(3);
   });
 });
