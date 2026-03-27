@@ -364,8 +364,8 @@ export function TerminalPanel() {
   }, [supervisor]);
 
   const tabs: { id: TabId; label: string; icon: string }[] = [
-    { id: 'logs', label: 'Actor Logs', icon: '📋' },
-    { id: 'inference', label: 'Inference', icon: '🧠' },
+    { id: 'logs', label: 'Actor Logs', icon: '▤' },
+    { id: 'inference', label: 'Inference', icon: '◎' },
     { id: 'repl', label: 'REPL', icon: '>' },
   ];
 

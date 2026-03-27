@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Bead, PolecatState } from '../actors/types';
 import { useEtsLookup } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Ticket, Flame, Wrench, CircleCheckBig, AlertTriangle, Zap, Siren } from 'lucide-react';
 
 function useElapsedTime(startTime: number): string {
   const [elapsed, setElapsed] = useState(0);
@@ -27,12 +27,12 @@ function getTimerColor(startTime: number): string {
   return 'bg-kds-alert/20 text-kds-alert animate-pulse-glow';
 }
 
-const statusEmoji: Record<string, string> = {
-  backlog: '🎫',
-  in_progress: '🔥',
-  refinery: '🔧',
-  merged: '✅',
-  stalled: '⚠️',
+const statusIcons: Record<string, React.ReactNode> = {
+  backlog: <Ticket className="w-3.5 h-3.5" />,
+  in_progress: <Flame className="w-3.5 h-3.5" />,
+  refinery: <Wrench className="w-3.5 h-3.5" />,
+  merged: <CircleCheckBig className="w-3.5 h-3.5" />,
+  stalled: <AlertTriangle className="w-3.5 h-3.5" />,
 };
 
 export function OrderTicket({ bead, stationColor }: { bead: Bead; stationColor: string }) {
@@ -47,7 +47,7 @@ export function OrderTicket({ bead, stationColor }: { bead: Bead; stationColor: 
       {/* Ticket header */}
       <div className="kds-ticket-header bg-secondary/80">
         <div className="flex items-center gap-1.5">
-          <span>{statusEmoji[bead.status]}</span>
+          {statusIcons[bead.status]}
           <span className="font-mono text-foreground">{bead.id}</span>
         </div>
         <span className={`kds-timer ${timerColor}`}>{timer}</span>
@@ -73,14 +73,14 @@ export function OrderTicket({ bead, stationColor }: { bead: Bead; stationColor: 
         {/* Convoy / combo order */}
         {bead.convoyId && (
           <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-kds-prep/15 text-kds-prep font-mono">
-            ⚡ Combo: {bead.convoyId}
+            <Zap className="w-3 h-3" /> Combo: {bead.convoyId}
           </span>
         )}
 
         {/* Escalation */}
         {bead.escalated && (
           <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-kds-alert/10 border border-kds-alert/30">
-            <span className="text-xs">🚨</span>
+            <Siren className="w-3.5 h-3.5 text-kds-alert" />
             <span className="text-xs font-bold text-kds-alert tracking-wide">ESCALATED — NEEDS ATTENTION</span>
           </div>
         )}
@@ -120,15 +120,15 @@ export function OrderTicket({ bead, stationColor }: { bead: Bead; stationColor: 
       {bead.status === 'backlog' && (
         <button
           onClick={() => assignBeadToPolecat(bead.id)}
-          className="kds-bump bg-kds-grill/90 text-primary-foreground hover:bg-kds-grill"
+          className="kds-bump bg-kds-grill/90 text-primary-foreground hover:bg-kds-grill flex items-center justify-center gap-2"
         >
-          🔥 Fire Order
+          <Flame className="w-3.5 h-3.5" /> Fire Order
         </button>
       )}
 
       {bead.status === 'merged' && (
-        <div className="kds-bump bg-kds-done/20 text-kds-done text-center cursor-default">
-          ✓ SERVED
+        <div className="kds-bump bg-kds-done/20 text-kds-done text-center cursor-default flex items-center justify-center gap-2">
+          <CircleCheckBig className="w-3.5 h-3.5" /> SERVED
         </div>
       )}
     </div>
