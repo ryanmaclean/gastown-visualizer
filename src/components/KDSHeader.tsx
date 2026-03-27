@@ -48,7 +48,7 @@ export function KDSHeader() {
           ))}
         </div>
 
-        <ThemeToggle />
+        <ThemeSwitcher />
         <CreateBeadForm />
 
         <button
