@@ -536,5 +536,3 @@ export class GasTownShell {
   }
 }
 
-// Helper used by history command
-const term = { writeln: (_s: string) => {} } as Terminal;
