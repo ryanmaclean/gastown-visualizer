@@ -108,6 +108,7 @@ export function TerminalPanel() {
   const logsTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
   const inferenceTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
   const replTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
+  const shellRef = useRef<GasTownShell | null>(null);
   const initializedRef = useRef<{ logs: boolean; inference: boolean; repl: boolean }>({
     logs: false,
     inference: false,
