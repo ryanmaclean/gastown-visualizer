@@ -52,7 +52,7 @@ const lightTheme = {
   secondary: '220 6% 88%',
   secondaryForeground: '220 10% 30%',
   muted: '220 6% 90%',
-  mutedForeground: '220 6% 48%',
+  mutedForeground: '220 6% 40%',
   destructive: '0 60% 50%',
   destructiveForeground: '0 0% 100%',
 };
