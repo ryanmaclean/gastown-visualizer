@@ -255,127 +255,25 @@ export function TerminalPanel() {
     return () => unsubs.forEach(u => u());
   }, [isCollapsed]);
 
+  // Wire up the shell to the REPL terminal
   useEffect(() => {
     if (isCollapsed) return;
     const repl = replTermRef.current?.term;
     if (!repl) return;
 
-    let inputBuffer = '';
+    const shell = new GasTownShell(repl, { supervisor });
+    shellRef.current = shell;
+    shell.attach();
 
-    const prompt = () => {
-      repl.write(`\r\n${colorize('gastown>', 'green')} `);
+    return () => {
+      shell.detach();
+      shellRef.current = null;
     };
-
-    const handleData = repl.onData((data: string) => {
-      if (data === '\r' || data === '\n') {
-        const cmd = inputBuffer.trim();
-        inputBuffer = '';
-        repl.writeln('');
-        executeCommand(repl, cmd);
-        prompt();
-      } else if (data === '\x7f' || data === '\b') {
-        if (inputBuffer.length > 0) {
-          inputBuffer = inputBuffer.slice(0, -1);
-          repl.write('\b \b');
-        }
-      } else if (data === '\x03') {
-        inputBuffer = '';
-        repl.writeln('^C');
-        prompt();
-      } else if (data.length === 1 && data.charCodeAt(0) >= 32) {
-        inputBuffer += data;
-        repl.write(data);
-      }
-    });
-
-    return () => handleData.dispose();
   }, [isCollapsed, supervisor]);
 
-  const executeCommand = useCallback((term: Terminal, cmd: string) => {
-    if (!cmd) return;
-
-    const parts = cmd.split(/\s+/);
-    const command = parts[0];
-
-    switch (command) {
-      case 'ets.list': {
-        const tables = ets.list();
-        term.writeln(colorize(`ETS Tables (${tables.length}):`, 'bold'));
-        tables.forEach(t => {
-          const table = ets.get(t);
-          term.writeln(`  ${colorize(t, 'cyan')} — ${colorize(String(table?.size() || 0), 'yellow')} entries`);
-        });
-        break;
-      }
-      case 'ets.get': {
-        const tableName = parts[1];
-        if (!tableName) {
-          term.writeln(colorize('Usage: ets.get <table_name>', 'red'));
-          break;
-        }
-        const table = ets.get(tableName);
-        if (!table) {
-          term.writeln(colorize(`Table "${tableName}" not found`, 'red'));
-          break;
-        }
-        const entries = table.tab2list();
-        term.writeln(colorize(`${tableName} (${entries.length} entries):`, 'bold'));
-        entries.forEach(([k, v]) => {
-          const val = typeof v === 'object' ? JSON.stringify(v) : String(v);
-          const truncated = val.length > 120 ? val.slice(0, 120) + '...' : val;
-          term.writeln(`  ${colorize(k, 'cyan')}: ${colorize(truncated, 'dim')}`);
-        });
-        break;
-      }
-      case 'sup.children': {
-        if (!supervisor) {
-          term.writeln(colorize('Supervisor not ready', 'red'));
-          break;
-        }
-        const children = supervisor.whichChildren();
-        term.writeln(colorize(`Supervisor Children (${children.length}):`, 'bold'));
-        children.forEach(c => {
-          const statusColor = c.status === 'running' ? 'green' : c.status === 'crashed' ? 'red' : 'yellow';
-          term.writeln(`  ${colorize(c.name, 'cyan')} ${colorize(`[${c.status}]`, statusColor)} ${colorize(`pid=${c.pid}`, 'dim')}`);
-        });
-        break;
-      }
-      case 'pubsub.topics': {
-        const topics = pubsub.getTopics();
-        term.writeln(colorize(`Active PubSub Topics (${topics.length}):`, 'bold'));
-        topics.forEach(t => term.writeln(`  ${colorize(t, 'cyan')}`));
-        break;
-      }
-      case 'stats': {
-        const statsTable = ets.get('stats');
-        if (statsTable) {
-          const entries = statsTable.tab2list();
-          term.writeln(colorize('System Stats:', 'bold'));
-          entries.forEach(([k, v]) => {
-            term.writeln(`  ${colorize(k, 'cyan')}: ${colorize(JSON.stringify(v), 'yellow')}`);
-          });
-        } else {
-          term.writeln(colorize('No stats available', 'dim'));
-        }
-        break;
-      }
-      case 'help': {
-        term.writeln(`${colorize('Commands:', 'bold')}`);
-        term.writeln(`  ${colorize('ets.list', 'cyan')}          — List all ETS tables`);
-        term.writeln(`  ${colorize('ets.get <table>', 'cyan')}   — Dump table contents`);
-        term.writeln(`  ${colorize('sup.children', 'cyan')}      — List supervisor children`);
-        term.writeln(`  ${colorize('pubsub.topics', 'cyan')}     — List active PubSub topics`);
-        term.writeln(`  ${colorize('stats', 'cyan')}              — Show system stats`);
-        term.writeln(`  ${colorize('clear', 'cyan')}              — Clear terminal`);
-        break;
-      }
-      case 'clear':
-        term.clear();
-        break;
-      default:
-        term.writeln(colorize(`Unknown command: ${command}`, 'red'));
-        term.writeln(colorize('Type "help" for available commands', 'dim'));
-    }
+  // Keep shell context updated when supervisor changes
+  useEffect(() => {
+    shellRef.current?.updateContext({ supervisor });
   }, [supervisor]);
 
   const tabs: { id: TabId; label: string; icon: string }[] = [
