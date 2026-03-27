@@ -1,50 +1,49 @@
-// BoardHeader — Retro bitmap aesthetic
+// BoardHeader — Copland OS aesthetic
 
 import React from 'react';
 import { useGasTown } from '../context/GasTownContext';
 import { RigSelector } from './RigSelector';
 import { CreateBeadForm } from './CreateBeadForm';
 import { ThemeToggle } from './ThemeToggle';
-import { Search, SlidersHorizontal, Zap } from 'lucide-react';
 import { useEtsTable } from '../hooks/useEts';
 import { PolecatState } from '../actors/types';
+import { AgentIcon } from './CoplandIcons';
 
 export function KDSHeader() {
   const { autoAssignBacklog } = useGasTown();
   const polecats = useEtsTable<PolecatState>('polecats');
 
   return (
-    <header className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-card">
-      <div className="flex items-center gap-3">
-        {/* Search */}
-        <div className="flex items-center gap-2 px-2.5 py-1 border border-border bg-background w-52">
-          <Search className="w-3.5 h-3.5 text-muted-foreground" />
+    <header className="flex items-center justify-between px-3 py-1.5 border-b border-border copland-title-stripes">
+      <div className="flex items-center gap-2">
+        {/* Search — inset field */}
+        <div className="copland-inset flex items-center gap-1.5 px-2 py-1 bg-card w-48">
+          <span className="text-[10px] text-muted-foreground">🔍</span>
           <input
             type="text"
             placeholder="search..."
-            className="bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none flex-1 font-mono"
+            className="bg-transparent text-[11px] text-foreground placeholder:text-muted-foreground outline-none flex-1 font-mono"
           />
         </div>
 
-        {/* Filter */}
-        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          filter
+        {/* Filter — raised button */}
+        <button className="copland-raised bg-background px-2 py-1 text-[10px] text-foreground hover:bg-secondary transition-colors flex items-center gap-1">
+          ≡ filter
         </button>
 
         <RigSelector />
       </div>
 
-      <div className="flex items-center gap-2.5">
-        {/* Agent indicators */}
-        <div className="flex gap-1">
+      <div className="flex items-center gap-2">
+        {/* Agent avatars */}
+        <div className="flex gap-0.5">
           {polecats.slice(0, 4).map(([, p]) => (
             <div
               key={p.pid}
-              className="w-6 h-6 border border-border bg-background flex items-center justify-center text-[9px] font-bold text-muted-foreground"
+              className="w-6 h-6 copland-raised bg-background flex items-center justify-center"
               title={p.name}
             >
-              {p.name.charAt(0)}
+              <AgentIcon name={p.name} size={14} />
             </div>
           ))}
         </div>
@@ -54,9 +53,9 @@ export function KDSHeader() {
 
         <button
           onClick={autoAssignBacklog}
-          className="flex items-center gap-1.5 px-3 py-1.5 border border-primary bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors"
+          className="copland-raised bg-primary text-primary-foreground px-3 py-1 text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center gap-1"
         >
-          <Zap className="w-3.5 h-3.5" /> fire all
+          ⚡ Fire All
         </button>
       </div>
     </header>

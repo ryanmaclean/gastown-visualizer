@@ -1,10 +1,10 @@
-// StatsPanel — model stats, scheduler metrics, system health
+// StatsPanel — Copland OS style with pixel chart
 
 import React from 'react';
 import { useEngineStats, useScheduler } from '../hooks/useScheduler';
 import { useEtsTable } from '../hooks/useEts';
 import { Bead } from '../actors/types';
-import { Activity } from 'lucide-react';
+import { PixelChart } from './CoplandIcons';
 
 export function StatsPanel() {
   const engineStats = useEngineStats();
@@ -38,15 +38,15 @@ export function StatsPanel() {
   ];
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 px-1">
-        <Activity className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold text-foreground tracking-wide">STATS</span>
+    <div className="space-y-2">
+      <div className="flex items-center gap-1.5">
+        <PixelChart size={12} />
+        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Stats</span>
       </div>
 
-      <div className="space-y-0.5">
+      <div className="copland-inset bg-card p-1">
         {statRows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between px-2 py-0.5 text-xs font-mono">
+          <div key={row.label} className="flex items-center justify-between px-1 py-px text-[9px] font-mono hover:bg-primary hover:text-primary-foreground">
             <span className="text-muted-foreground">{row.label}</span>
             <span className="text-foreground">{row.value}</span>
           </div>
@@ -54,9 +54,9 @@ export function StatsPanel() {
       </div>
 
       {/* Bead distribution bar */}
-      <div className="px-2 space-y-1">
-        <span className="text-xs font-mono text-muted-foreground">Distribution</span>
-        <div className="flex h-2 rounded-full overflow-hidden bg-secondary">
+      <div className="px-1 space-y-0.5">
+        <span className="text-[8px] font-mono text-muted-foreground uppercase">Distribution</span>
+        <div className="copland-inset flex h-2.5 overflow-hidden bg-card p-px">
           {beadsByStatus.backlog > 0 && (
             <div className="bg-muted-foreground/50" style={{ width: `${(beadsByStatus.backlog / totalBeads) * 100}%` }} />
           )}

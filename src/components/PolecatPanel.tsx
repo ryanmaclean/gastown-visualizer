@@ -1,9 +1,9 @@
-// PolecatPanel — agent list with status indicators
+// PolecatPanel — Copland-style agent list with pixel-art icons
 
 import React from 'react';
 import { useEtsTable } from '../hooks/useEts';
 import { PolecatState } from '../actors/types';
-import { Cpu } from 'lucide-react';
+import { AgentIcon } from './CoplandIcons';
 
 const statusStyles: Record<string, string> = {
   idle: 'text-muted-foreground',
@@ -12,42 +12,35 @@ const statusStyles: Record<string, string> = {
   queued: 'text-terminal-amber',
 };
 
-const statusDot: Record<string, string> = {
-  idle: 'bg-muted-foreground',
-  working: 'bg-primary',
-  stalled: 'bg-destructive',
-  queued: 'bg-terminal-amber',
-};
-
 export function PolecatPanel() {
   const polecats = useEtsTable<PolecatState>('polecats');
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-1.5">
       {/* Header */}
-      <div className="flex items-center gap-2 px-1">
-        <Cpu className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold text-foreground tracking-wide">POLECATS</span>
-        <span className="text-xs text-muted-foreground font-mono">×{polecats.length}</span>
+      <div className="flex items-center gap-1.5">
+        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Agents</span>
+        <span className="text-[9px] text-muted-foreground font-mono">×{polecats.length}</span>
       </div>
 
       {/* Agent list */}
-      <div className="space-y-1.5">
+      <div className="space-y-0.5">
         {polecats.map(([pid, p]) => (
           <div
             key={pid}
-            className="flex items-center gap-2 px-2 py-1.5 rounded bg-secondary/30 border border-border/50"
+            className="flex items-center gap-2 px-1.5 py-1 hover:bg-primary hover:text-primary-foreground transition-colors group"
           >
-            <span className="text-base">{p.avatar}</span>
+            <div className="w-5 h-5 copland-raised bg-background flex items-center justify-center p-0.5">
+              <AgentIcon name={p.name} size={14} />
+            </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-foreground">{p.name}</span>
-                <span className={`w-1.5 h-1.5 rounded-full ${statusDot[p.status] || statusDot.idle}`} />
-                <span className={`text-xs font-mono ${statusStyles[p.status] || ''}`}>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-bold group-hover:text-inherit text-foreground">{p.name}</span>
+                <span className={`text-[9px] font-mono ${statusStyles[p.status] || ''} group-hover:text-inherit`}>
                   {p.status.toUpperCase()}
                 </span>
               </div>
-              <div className="text-xs text-muted-foreground font-mono">
+              <div className="text-[9px] text-muted-foreground group-hover:text-inherit/70 font-mono">
                 {p.currentBeadId ? `→ ${p.currentBeadId}` : `${p.totalBeadsProcessed} done`}
               </div>
             </div>
