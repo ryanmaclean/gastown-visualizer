@@ -4,7 +4,7 @@ import React from 'react';
 import { useGasTown } from '../context/GasTownContext';
 import { RigSelector } from './RigSelector';
 import { CreateBeadForm } from './CreateBeadForm';
-import { ThemeSwitcher } from './ThemeSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import { useEtsTable } from '../hooks/useEts';
 import { PolecatState } from '../actors/types';
 import { AgentIcon } from './CoplandIcons';
@@ -48,7 +48,7 @@ export function KDSHeader() {
           ))}
         </div>
 
-        <ThemeSwitcher />
+        <ThemeToggle />
         <CreateBeadForm />
 
         <button
