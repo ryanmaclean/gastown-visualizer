@@ -65,6 +65,38 @@ function colorize(text: string, color: string): string {
   return `${codes[color] || ''}${text}${codes.reset}`;
 }
 
+function writeLogsBanner(term: Terminal) {
+  term.writeln(colorize('╔══════════════════════════════════════╗', 'green'));
+  term.writeln(colorize('║  GAS TOWN — Actor System Event Log  ║', 'green'));
+  term.writeln(colorize('╚══════════════════════════════════════╝', 'green'));
+  term.writeln('');
+  term.writeln(`${colorize(timestamp(), 'dim')} ${colorize('●', 'green')} ${colorize('BOOT', 'bold')} ${colorize('Terminal ready — waiting for actor events', 'dim')}`);
+}
+
+function writeInferenceBanner(term: Terminal) {
+  term.writeln(colorize('╔═══════════════════════════════════════╗', 'cyan'));
+  term.writeln(colorize('║  WebLLM Inference Streaming Output   ║', 'cyan'));
+  term.writeln(colorize('╚═══════════════════════════════════════╝', 'cyan'));
+  term.writeln('');
+  term.writeln(`${colorize(timestamp(), 'dim')} ${colorize('◎', 'cyan')} ${colorize('READY', 'bold')} ${colorize('Waiting for inference stream', 'dim')}`);
+}
+
+function writeReplBanner(term: Terminal) {
+  term.writeln(colorize('╔═══════════════════════════════════════╗', 'magenta'));
+  term.writeln(colorize('║  Gas Town Interactive REPL            ║', 'magenta'));
+  term.writeln(colorize('╚═══════════════════════════════════════╝', 'magenta'));
+  term.writeln('');
+  term.writeln(`${colorize('Commands:', 'bold')}`);
+  term.writeln(`  ${colorize('ets.list', 'cyan')}          — List all ETS tables`);
+  term.writeln(`  ${colorize('ets.get <table>', 'cyan')}   — Dump table contents`);
+  term.writeln(`  ${colorize('sup.children', 'cyan')}      — List supervisor children`);
+  term.writeln(`  ${colorize('pubsub.topics', 'cyan')}     — List active PubSub topics`);
+  term.writeln(`  ${colorize('stats', 'cyan')}              — Show system stats`);
+  term.writeln(`  ${colorize('help', 'cyan')}               — Show this help`);
+  term.writeln(`  ${colorize('clear', 'cyan')}              — Clear terminal`);
+  term.write(`\r\n${colorize('gastown>', 'green')} `);
+}
+
 export function TerminalPanel() {
   const [activeTab, setActiveTab] = useState<TabId>('logs');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -76,42 +108,43 @@ export function TerminalPanel() {
   const logsTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
   const inferenceTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
   const replTermRef = useRef<{ term: Terminal; fit: FitAddon } | null>(null);
+  const initializedRef = useRef<{ logs: boolean; inference: boolean; repl: boolean }>({
+    logs: false,
+    inference: false,
+    repl: false,
+  });
 
   const { supervisor } = useGasTown();
 
-  // Initialize terminals
   useEffect(() => {
     if (isCollapsed) return;
 
-    const initTerm = (ref: React.RefObject<HTMLDivElement>, termRef: React.MutableRefObject<{ term: Terminal; fit: FitAddon } | null>) => {
+    const initTerm = (
+      ref: React.RefObject<HTMLDivElement>,
+      termRef: React.MutableRefObject<{ term: Terminal; fit: FitAddon } | null>,
+      kind: TabId,
+    ) => {
       if (ref.current && !termRef.current) {
         const t = createTerminal();
         t.term.open(ref.current);
-        setTimeout(() => t.fit.fit(), 50);
         termRef.current = t;
+
+        requestAnimationFrame(() => {
+          t.fit.fit();
+
+          if (!initializedRef.current[kind]) {
+            if (kind === 'logs') writeLogsBanner(t.term);
+            if (kind === 'inference') writeInferenceBanner(t.term);
+            if (kind === 'repl') writeReplBanner(t.term);
+            initializedRef.current[kind] = true;
+          }
+        });
       }
     };
 
-    initTerm(logsRef, logsTermRef);
-    initTerm(inferenceRef, inferenceTermRef);
-    initTerm(replRef, replTermRef);
-
-    // Print welcome messages
-    const logs = logsTermRef.current?.term;
-    if (logs && logs.buffer.active.length <= 1) {
-      logs.writeln(colorize('╔══════════════════════════════════════╗', 'green'));
-      logs.writeln(colorize('║  GAS TOWN — Actor System Event Log  ║', 'green'));
-      logs.writeln(colorize('╚══════════════════════════════════════╝', 'green'));
-      logs.writeln('');
-    }
-
-    const inf = inferenceTermRef.current?.term;
-    if (inf && inf.buffer.active.length <= 1) {
-      inf.writeln(colorize('╔═══════════════════════════════════════╗', 'cyan'));
-      inf.writeln(colorize('║  WebLLM Inference Streaming Output   ║', 'cyan'));
-      inf.writeln(colorize('╚═══════════════════════════════════════╝', 'cyan'));
-      inf.writeln('');
-    }
+    initTerm(logsRef, logsTermRef, 'logs');
+    initTerm(inferenceRef, inferenceTermRef, 'inference');
+    initTerm(replRef, replTermRef, 'repl');
 
     return () => {
       logsTermRef.current?.term.dispose();
@@ -120,23 +153,22 @@ export function TerminalPanel() {
       inferenceTermRef.current = null;
       replTermRef.current?.term.dispose();
       replTermRef.current = null;
+      initializedRef.current = { logs: false, inference: false, repl: false };
     };
   }, [isCollapsed]);
 
-  // Fit on resize and tab change
   useEffect(() => {
     if (isCollapsed) return;
     const currentRef = activeTab === 'logs' ? logsTermRef : activeTab === 'inference' ? inferenceTermRef : replTermRef;
-    setTimeout(() => currentRef.current?.fit.fit(), 50);
+    requestAnimationFrame(() => currentRef.current?.fit.fit());
 
     const handleResize = () => {
-      setTimeout(() => currentRef.current?.fit.fit(), 100);
+      requestAnimationFrame(() => currentRef.current?.fit.fit());
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [activeTab, isCollapsed]);
 
-  // Subscribe to PubSub for actor logs
   useEffect(() => {
     if (isCollapsed) return;
     const unsubs: (() => void)[] = [];
@@ -193,7 +225,6 @@ export function TerminalPanel() {
     return () => unsubs.forEach(u => u());
   }, [isCollapsed]);
 
-  // Subscribe to inference streaming output
   useEffect(() => {
     if (isCollapsed) return;
     const unsubs: (() => void)[] = [];
@@ -223,7 +254,6 @@ export function TerminalPanel() {
     return () => unsubs.forEach(u => u());
   }, [isCollapsed]);
 
-  // REPL input handling
   useEffect(() => {
     if (isCollapsed) return;
     const repl = replTermRef.current?.term;
@@ -234,22 +264,6 @@ export function TerminalPanel() {
     const prompt = () => {
       repl.write(`\r\n${colorize('gastown>', 'green')} `);
     };
-
-    if (repl.buffer.active.length <= 1) {
-      repl.writeln(colorize('╔═══════════════════════════════════════╗', 'magenta'));
-      repl.writeln(colorize('║  Gas Town Interactive REPL            ║', 'magenta'));
-      repl.writeln(colorize('╚═══════════════════════════════════════╝', 'magenta'));
-      repl.writeln('');
-      repl.writeln(`${colorize('Commands:', 'bold')}`);
-      repl.writeln(`  ${colorize('ets.list', 'cyan')}          — List all ETS tables`);
-      repl.writeln(`  ${colorize('ets.get <table>', 'cyan')}   — Dump table contents`);
-      repl.writeln(`  ${colorize('sup.children', 'cyan')}      — List supervisor children`);
-      repl.writeln(`  ${colorize('pubsub.topics', 'cyan')}     — List active PubSub topics`);
-      repl.writeln(`  ${colorize('stats', 'cyan')}              — Show system stats`);
-      repl.writeln(`  ${colorize('help', 'cyan')}               — Show this help`);
-      repl.writeln(`  ${colorize('clear', 'cyan')}              — Clear terminal`);
-      prompt();
-    }
 
     const handleData = repl.onData((data: string) => {
       if (data === '\r' || data === '\n') {
@@ -371,7 +385,6 @@ export function TerminalPanel() {
 
   return (
     <div className={`border-t border-border bg-card/80 flex flex-col ${isCollapsed ? 'h-8' : 'h-64'} transition-all`}>
-      {/* Tab bar */}
       <div className="flex items-center justify-between px-2 h-8 min-h-[2rem] border-b border-border bg-card/50">
         <div className="flex items-center gap-1">
           {tabs.map(tab => (
@@ -396,7 +409,6 @@ export function TerminalPanel() {
         </button>
       </div>
 
-      {/* Terminal containers — use opacity instead of display:none so xterm can measure */}
       {!isCollapsed && (
         <div className="flex-1 relative min-h-0">
           <div ref={logsRef} className={`absolute inset-0 ${activeTab === 'logs' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`} />
