@@ -222,6 +222,10 @@ const catppuccin: Theme = {
     border: '220 12% 82%',
     input: '220 12% 85%',
     ring: '266 85% 58%',
+    'terminal-green': '115 54% 42%',
+    'terminal-amber': '23 92% 50%',
+    'terminal-red': '347 87% 44%',
+    'terminal-cyan': '183 74% 38%',
   },
   dark: {
     background: '240 21% 15%',
