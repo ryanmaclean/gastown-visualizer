@@ -340,6 +340,9 @@ export function applyTheme(theme: Theme, mode: 'light' | 'dark') {
   // Persist
   localStorage.setItem('theme-id', theme.id);
   localStorage.setItem('theme-mode', mode);
+
+  // Notify icon components of theme change
+  window.dispatchEvent(new Event('theme-changed'));
 }
 
 export function loadSavedTheme(): { theme: Theme; mode: 'light' | 'dark' } {
