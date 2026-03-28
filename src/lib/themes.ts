@@ -302,6 +302,10 @@ const nord: Theme = {
     border: '220 16% 30%',
     input: '220 16% 30%',
     ring: '213 32% 62%',
+    'terminal-green': '92 28% 48%',
+    'terminal-amber': '40 71% 56%',
+    'terminal-red': '354 42% 60%',
+    'terminal-cyan': '193 43% 55%',
   },
 };
 
