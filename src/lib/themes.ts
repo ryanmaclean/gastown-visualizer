@@ -277,6 +277,10 @@ const nord: Theme = {
     border: '219 15% 78%',
     input: '219 15% 82%',
     ring: '213 32% 52%',
+    'terminal-green': '92 28% 38%',
+    'terminal-amber': '40 71% 48%',
+    'terminal-red': '354 42% 56%',
+    'terminal-cyan': '193 43% 48%',
   },
   dark: {
     background: '220 16% 22%',
