@@ -54,7 +54,7 @@ const pairs: [string, string, number][] = [
 
 for (const theme of themes) {
   for (const modeName of ['light', 'dark'] as const) {
-    const vars = theme[modeName] as Record<string, string>;
+    const vars = theme[modeName] as unknown as Record<string, string>;
 
     describe(`WCAG AA — ${theme.name} (${modeName})`, () => {
       for (const [fgKey, bgKey, minRatio] of pairs) {
