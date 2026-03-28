@@ -151,18 +151,18 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
 
       {/* Rigs */}
       <div className={`px-2 py-2 border-b border-border ${isIcon ? 'px-1' : ''}`}>
-        {!isIcon && <span className="px-1 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Rigs</span>}
+        {!isIcon && <span className="px-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Rigs</span>}
         <div className={`${isIcon ? 'space-y-1 mt-0' : 'mt-1.5 copland-inset bg-card p-0.5'}`}>
           {boards.map(b => (
             <button
               key={b.id}
               className={`${isIcon
-                ? 'w-full flex items-center justify-center py-1.5 hover:bg-primary hover:text-primary-foreground transition-colors'
-                : 'w-full flex items-center gap-2 px-2 py-1 text-[11px] text-foreground hover:bg-primary hover:text-primary-foreground transition-colors'
+                ? 'w-full flex items-center justify-center py-2 hover:bg-primary hover:text-primary-foreground transition-colors'
+                : 'w-full flex items-center gap-2 px-2 py-1.5 text-xs text-foreground hover:bg-primary hover:text-primary-foreground transition-colors'
               }`}
               title={b.label}
             >
-              <PixelFolder size={12} />
+              <PixelFolder size={16} />
               {!isIcon && <span className="flex-1 text-left truncate">{b.label}</span>}
             </button>
           ))}
@@ -171,18 +171,18 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
 
       {/* Views */}
       <div className={`px-2 py-2 border-b border-border ${isIcon ? 'px-1' : ''}`}>
-        {!isIcon && <span className="px-1 text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Views</span>}
+        {!isIcon && <span className="px-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Views</span>}
         <div className={`${isIcon ? 'space-y-1 mt-0' : 'mt-1.5 space-y-px'}`}>
           {views.map(v => (
             <button
               key={v.label}
               className={`${isIcon
-                ? `w-full flex items-center justify-center py-1.5 transition-colors ${v.active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-primary hover:text-primary-foreground'}`
-                : `w-full flex items-center gap-2 px-2 py-1 text-[11px] transition-colors ${v.active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-primary hover:text-primary-foreground'}`
+                ? `w-full flex items-center justify-center py-2 transition-colors ${v.active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-primary hover:text-primary-foreground'}`
+                : `w-full flex items-center gap-2 px-2 py-1.5 text-xs transition-colors ${v.active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-primary hover:text-primary-foreground'}`
               }`}
               title={v.label}
             >
-              <span className={`${isIcon ? 'text-[10px]' : 'w-3 h-3 border border-current flex items-center justify-center text-[7px]'}`}>
+              <span className={`${isIcon ? 'text-xs' : 'w-3.5 h-3.5 border border-current flex items-center justify-center text-[8px]'}`}>
                 {v.icon}
               </span>
               {!isIcon && <span>{v.label}</span>}
