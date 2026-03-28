@@ -118,24 +118,24 @@ const shadcnDefault: Theme = {
     'terminal-cyan': '199 89% 42%',
   },
   dark: {
-    background: '240 10% 3.9%',
-    foreground: '0 0% 98%',
-    card: '240 10% 3.9%',
-    'card-foreground': '0 0% 98%',
-    popover: '240 10% 3.9%',
-    'popover-foreground': '0 0% 98%',
+    background: '240 6% 7%',
+    foreground: '0 0% 93%',
+    card: '240 5% 12%',
+    'card-foreground': '0 0% 93%',
+    popover: '240 5% 12%',
+    'popover-foreground': '0 0% 93%',
     primary: '0 0% 98%',
     'primary-foreground': '240 5.9% 10%',
-    secondary: '240 3.7% 15.9%',
-    'secondary-foreground': '0 0% 98%',
-    muted: '240 3.7% 15.9%',
-    'muted-foreground': '240 5% 64.9%',
-    accent: '240 3.7% 15.9%',
-    'accent-foreground': '0 0% 98%',
-    destructive: '0 62.8% 30.6%',
+    secondary: '240 4% 18%',
+    'secondary-foreground': '0 0% 88%',
+    muted: '240 4% 15%',
+    'muted-foreground': '240 5% 58%',
+    accent: '240 5% 20%',
+    'accent-foreground': '0 0% 93%',
+    destructive: '0 62.8% 40%',
     'destructive-foreground': '0 0% 98%',
-    border: '240 3.7% 15.9%',
-    input: '240 3.7% 15.9%',
+    border: '240 4% 22%',
+    input: '240 4% 20%',
     ring: '240 4.9% 83.9%',
     'terminal-green': '142 71% 45%',
     'terminal-amber': '38 92% 56%',
@@ -329,6 +329,49 @@ export function applyTheme(theme: Theme, mode: 'light' | 'dark') {
   for (const [key, value] of Object.entries(vars)) {
     root.style.setProperty(`--${key}`, value);
   }
+
+  // Derive sidebar vars from theme
+  root.style.setProperty('--sidebar-background', vars.background);
+  root.style.setProperty('--sidebar-foreground', vars.foreground);
+  root.style.setProperty('--sidebar-primary', vars.primary);
+  root.style.setProperty('--sidebar-primary-foreground', vars['primary-foreground']);
+  root.style.setProperty('--sidebar-accent', vars.accent);
+  root.style.setProperty('--sidebar-accent-foreground', vars['accent-foreground']);
+  root.style.setProperty('--sidebar-border', vars.border);
+  root.style.setProperty('--sidebar-ring', vars.ring);
+
+  // Derive status vars from theme
+  root.style.setProperty('--status-todo', vars.muted);
+  root.style.setProperty('--status-todo-text', vars['muted-foreground']);
+  root.style.setProperty('--status-progress', vars.primary);
+  root.style.setProperty('--status-progress-text', vars['primary-foreground']);
+  root.style.setProperty('--status-done', vars['terminal-green']);
+  root.style.setProperty('--status-done-text', mode === 'dark' ? '0 0% 10%' : '0 0% 98%');
+  root.style.setProperty('--status-alert', vars['terminal-red']);
+
+  // Derive KDS vars
+  root.style.setProperty('--kds-queue', vars.muted);
+  root.style.setProperty('--kds-done', vars['terminal-green']);
+  root.style.setProperty('--kds-alert', vars['terminal-red']);
+  root.style.setProperty('--kds-timer-ok', vars['terminal-green']);
+  root.style.setProperty('--kds-timer-warn', vars['terminal-amber']);
+  root.style.setProperty('--kds-timer-critical', vars['terminal-red']);
+
+  // Derive glow vars for dark mode
+  if (mode === 'dark') {
+    root.style.setProperty('--glow-green', `0 0 8px hsl(${vars['terminal-green']} / 0.3)`);
+    root.style.setProperty('--glow-amber', `0 0 8px hsl(${vars['terminal-amber']} / 0.3)`);
+    root.style.setProperty('--glow-red', `0 0 8px hsl(${vars['terminal-red']} / 0.3)`);
+  } else {
+    root.style.setProperty('--glow-green', 'none');
+    root.style.setProperty('--glow-amber', 'none');
+    root.style.setProperty('--glow-red', 'none');
+  }
+
+  // Derive highlight/shadow
+  root.style.setProperty('--highlight', mode === 'dark' ? vars.secondary : '0 0% 100%');
+  root.style.setProperty('--shadow-edge', mode === 'dark' ? vars.background : vars.border);
+  root.style.setProperty('--terminal-dim', vars['muted-foreground']);
 
   // Toggle dark class
   if (mode === 'dark') {
