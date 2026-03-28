@@ -11,34 +11,60 @@ import { GasTownShell } from '../lib/shell';
 
 type TabId = 'logs' | 'inference' | 'repl';
 
-const THEME = {
-  background: '#0a0f0a',
-  foreground: '#4ade80',
-  cursor: '#4ade80',
-  cursorAccent: '#0a0f0a',
-  selectionBackground: '#4ade8040',
-  black: '#0a0f0a',
-  red: '#ef4444',
-  green: '#4ade80',
-  yellow: '#f59e0b',
-  blue: '#60a5fa',
-  magenta: '#c084fc',
-  cyan: '#22d3ee',
-  white: '#e2e8f0',
-  brightBlack: '#334155',
-  brightRed: '#f87171',
-  brightGreen: '#86efac',
-  brightYellow: '#fbbf24',
-  brightBlue: '#93c5fd',
-  brightMagenta: '#d8b4fe',
-  brightCyan: '#67e8f9',
-  brightWhite: '#f8fafc',
-};
+function hslVarToHex(varName: string): string {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  if (!raw) return '#000000';
+  const parts = raw.split(/\s+/);
+  const h = parseFloat(parts[0]) || 0;
+  const s = (parseFloat(parts[1]) || 0) / 100;
+  const l = (parseFloat(parts[2]) || 0) / 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(c * 255).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+function buildTerminalTheme(): Record<string, string> {
+  const bg = hslVarToHex('--background');
+  const fg = hslVarToHex('--foreground');
+  const green = hslVarToHex('--terminal-green');
+  const amber = hslVarToHex('--terminal-amber');
+  const red = hslVarToHex('--terminal-red');
+  const cyan = hslVarToHex('--terminal-cyan');
+  const primary = hslVarToHex('--primary');
+  const muted = hslVarToHex('--muted-foreground');
+  return {
+    background: bg,
+    foreground: green,
+    cursor: green,
+    cursorAccent: bg,
+    selectionBackground: green + '40',
+    black: bg,
+    red,
+    green,
+    yellow: amber,
+    blue: primary,
+    magenta: hslVarToHex('--accent-foreground'),
+    cyan,
+    white: fg,
+    brightBlack: muted,
+    brightRed: red,
+    brightGreen: green,
+    brightYellow: amber,
+    brightBlue: primary,
+    brightMagenta: hslVarToHex('--accent-foreground'),
+    brightCyan: cyan,
+    brightWhite: hslVarToHex('--card-foreground'),
+  };
+}
 
 function createTerminal(): { term: Terminal; fit: FitAddon } {
   const fit = new FitAddon();
   const term = new Terminal({
-    theme: THEME,
+    theme: buildTerminalTheme(),
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 12,
     lineHeight: 1.3,
@@ -116,6 +142,18 @@ export function TerminalPanel() {
   });
 
   const { supervisor } = useGasTown();
+
+  // Re-theme terminals when theme changes
+  useEffect(() => {
+    const onThemeChanged = () => {
+      const newTheme = buildTerminalTheme();
+      logsTermRef.current?.term.options.theme && (logsTermRef.current.term.options.theme = newTheme);
+      inferenceTermRef.current?.term.options.theme && (inferenceTermRef.current.term.options.theme = newTheme);
+      replTermRef.current?.term.options.theme && (replTermRef.current.term.options.theme = newTheme);
+    };
+    window.addEventListener('theme-changed', onThemeChanged);
+    return () => window.removeEventListener('theme-changed', onThemeChanged);
+  }, []);
 
   useEffect(() => {
     if (isCollapsed) return;
