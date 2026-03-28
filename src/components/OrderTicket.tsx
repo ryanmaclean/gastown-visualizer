@@ -60,14 +60,14 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
   return (
     <div className="copland-raised bg-card overflow-hidden animate-card-in group">
       {/* Card content */}
-      <div className="p-2.5 space-y-2">
+      <div className="p-3 space-y-2">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {tags.map((tag, i) => (
               <span
                 key={i}
-                className={`inline-flex items-center text-[8px] font-bold tracking-widest px-1.5 py-0.5 ${tagStyles[tag.variant] || 'bg-muted text-muted-foreground'}`}
+                className={`inline-flex items-center text-[10px] font-bold tracking-widest px-1.5 py-0.5 ${tagStyles[tag.variant] || 'bg-muted text-muted-foreground'}`}
               >
                 {tag.label}
               </span>
@@ -77,9 +77,9 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
 
         {/* Title */}
         <div>
-          <h4 className="text-[11px] font-bold text-foreground leading-snug">{bead.title}</h4>
+          <h4 className="text-xs font-bold text-foreground leading-snug">{bead.title}</h4>
           {bead.description && (
-            <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
+            <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
               {bead.description}
             </p>
           )}
@@ -88,11 +88,11 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
         {/* Progress */}
         {progress > 0 && (
           <div className="space-y-0.5">
-            <div className="flex items-center justify-between text-[8px] uppercase tracking-wider">
+            <div className="flex items-center justify-between text-[10px] uppercase tracking-wider">
               <span className="text-muted-foreground">progress</span>
               <span className="font-bold text-foreground tabular-nums">{Math.round(progress)}%</span>
             </div>
-            <div className="copland-inset h-2 bg-card overflow-hidden p-px">
+            <div className="copland-inset h-2.5 bg-card overflow-hidden p-px">
               <div
                 className={`h-full ${progressColor} transition-all duration-500`}
                 style={{ width: `${progress}%` }}
@@ -106,12 +106,12 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           <div>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-[9px] text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
             >
               {expanded ? '▾' : '▸'} output
             </button>
             {expanded && (
-              <pre className="mt-1 p-1.5 copland-inset bg-card text-[9px] text-foreground/70 max-h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono">
+              <pre className="mt-1 p-1.5 copland-inset bg-card text-[10px] text-foreground/70 max-h-24 overflow-y-auto whitespace-pre-wrap break-words font-mono">
                 {bead.tokenStream}
                 {bead.status === 'in_progress' && <span className="animate-blink">▌</span>}
               </pre>
@@ -124,20 +124,20 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           <div className="flex items-center gap-1.5">
             {polecat ? (
               <div className="flex items-center gap-1">
-                <div className="w-5 h-5 copland-raised bg-background flex items-center justify-center p-0.5">
-                  <AgentIcon name={polecat.name} size={12} />
+                <div className="w-6 h-6 copland-raised bg-background flex items-center justify-center p-0.5">
+                  <AgentIcon name={polecat.name} size={16} />
                 </div>
-                <span className="text-[9px] text-muted-foreground">{polecat.name}</span>
+                <span className="text-[10px] text-muted-foreground">{polecat.name}</span>
                 {bead.status === 'in_progress' && (
                   <span className="w-1.5 h-1.5 bg-primary animate-pulse-glow" />
                 )}
               </div>
             ) : (
-              <div className="w-5 h-5 copland-inset bg-card" />
+              <div className="w-6 h-6 copland-inset bg-card" />
             )}
           </div>
 
-          <span className="text-[9px] text-muted-foreground tabular-nums font-mono">
+          <span className="text-[10px] text-muted-foreground tabular-nums font-mono">
             ⏱{timer}
           </span>
         </div>
@@ -147,7 +147,7 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
       {bead.status === 'backlog' && (
         <button
           onClick={() => assignBeadToPolecat(bead.id)}
-          className="w-full py-1 text-[9px] font-bold uppercase tracking-wider text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
+          className="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
         >
           ▷ Assign Agent
         </button>
