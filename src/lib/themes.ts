@@ -247,6 +247,10 @@ const catppuccin: Theme = {
     border: '240 17% 24%',
     input: '240 17% 24%',
     ring: '267 84% 81%',
+    'terminal-green': '115 54% 52%',
+    'terminal-amber': '23 92% 56%',
+    'terminal-red': '347 87% 52%',
+    'terminal-cyan': '183 74% 48%',
   },
 };
 
