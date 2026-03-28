@@ -21,6 +21,10 @@ export interface ThemeVars {
   border: string;
   input: string;
   ring: string;
+  'terminal-green': string;
+  'terminal-amber': string;
+  'terminal-red': string;
+  'terminal-cyan': string;
 }
 
 export interface Theme {
