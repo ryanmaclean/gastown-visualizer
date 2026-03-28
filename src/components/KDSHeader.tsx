@@ -4,7 +4,7 @@ import React from 'react';
 import { useGasTown } from '../context/GasTownContext';
 import { RigSelector } from './RigSelector';
 import { CreateBeadForm } from './CreateBeadForm';
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeSwitcher } from './ThemeSwitcher';
 import { useEtsTable } from '../hooks/useEts';
 import { PolecatState } from '../actors/types';
 import { AgentIcon } from './CoplandIcons';
