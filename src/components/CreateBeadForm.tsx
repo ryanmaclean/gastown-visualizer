@@ -21,9 +21,9 @@ export function CreateBeadForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1 px-2.5 py-1 border border-border text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        className="flex items-center gap-1 px-2.5 py-1.5 border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
-        <Plus className="w-3 h-3" /> new bead
+        <Plus className="w-3.5 h-3.5" /> new bead
       </button>
     );
   }
