@@ -64,7 +64,7 @@ function buildTerminalTheme(): Record<string, string> {
 function createTerminal(): { term: Terminal; fit: FitAddon } {
   const fit = new FitAddon();
   const term = new Terminal({
-    theme: THEME,
+    theme: buildTerminalTheme(),
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 12,
     lineHeight: 1.3,
