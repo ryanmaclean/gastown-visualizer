@@ -196,25 +196,25 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
         {isIcon ? (
           // Icon-only: show small icons for each section
           <div className="flex flex-col items-center gap-3">
-            <div className="copland-raised bg-background p-1" title="Engine">
-              <PixelChip size={14} />
+            <div className="copland-raised bg-background p-1.5" title="Engine">
+              <PixelChip size={18} />
             </div>
-            <div className="copland-raised bg-background p-1" title="Agents">
-              <AgentIcon name="Rusty" size={14} />
+            <div className="copland-raised bg-background p-1.5" title="Agents">
+              <AgentIcon name="Rusty" size={18} />
             </div>
-            <div className="copland-raised bg-background p-1" title="Mayor">
-              <PixelShield size={14} />
+            <div className="copland-raised bg-background p-1.5" title="Mayor">
+              <PixelShield size={18} />
             </div>
-            <div className="copland-raised bg-background p-1" title="Stats">
-              <PixelChart size={14} />
+            <div className="copland-raised bg-background p-1.5" title="Stats">
+              <PixelChart size={18} />
             </div>
           </div>
         ) : (
           <>
             <div className="copland-inset bg-card p-2">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <PixelChip size={12} />
-                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Engine</span>
+                <PixelChip size={14} />
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engine</span>
               </div>
               <ModelSelector />
             </div>
@@ -236,8 +236,8 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
 
       {/* Footer */}
       <div className={`py-2 border-t border-border copland-title-stripes ${isIcon ? 'px-1 flex justify-center' : 'px-3'}`}>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-          <PixelGear size={12} />
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <PixelGear size={14} />
           {!isIcon && <span>Settings</span>}
         </div>
       </div>
