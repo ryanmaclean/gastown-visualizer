@@ -137,6 +137,10 @@ const shadcnDefault: Theme = {
     border: '240 3.7% 15.9%',
     input: '240 3.7% 15.9%',
     ring: '240 4.9% 83.9%',
+    'terminal-green': '142 71% 45%',
+    'terminal-amber': '38 92% 56%',
+    'terminal-red': '0 84% 60%',
+    'terminal-cyan': '199 89% 48%',
   },
 };
 
