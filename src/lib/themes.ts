@@ -254,7 +254,7 @@ const nord: Theme = {
     secondary: '220 16% 30%',
     'secondary-foreground': '219 28% 76%',
     muted: '220 16% 28%',
-    'muted-foreground': '219 15% 52%',
+    'muted-foreground': '219 15% 58%',
     accent: '220 18% 32%',
     'accent-foreground': '213 32% 72%',
     destructive: '354 42% 56%',
