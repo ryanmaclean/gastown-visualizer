@@ -21,6 +21,10 @@ export interface ThemeVars {
   border: string;
   input: string;
   ring: string;
+  'terminal-green': string;
+  'terminal-amber': string;
+  'terminal-red': string;
+  'terminal-cyan': string;
 }
 
 export interface Theme {
@@ -53,6 +57,10 @@ const coplandPlatinum: Theme = {
     border: '220 8% 78%',
     input: '220 8% 82%',
     ring: '220 55% 50%',
+    'terminal-green': '145 40% 36%',
+    'terminal-amber': '30 75% 44%',
+    'terminal-red': '0 60% 45%',
+    'terminal-cyan': '200 35% 42%',
   },
   dark: {
     background: '220 10% 10%',
@@ -74,6 +82,10 @@ const coplandPlatinum: Theme = {
     border: '220 10% 22%',
     input: '220 10% 22%',
     ring: '220 55% 58%',
+    'terminal-green': '145 40% 48%',
+    'terminal-amber': '30 75% 52%',
+    'terminal-red': '0 60% 52%',
+    'terminal-cyan': '200 35% 50%',
   },
 };
 
@@ -100,6 +112,10 @@ const shadcnDefault: Theme = {
     border: '240 5.9% 90%',
     input: '240 5.9% 90%',
     ring: '240 5.9% 10%',
+    'terminal-green': '142 71% 35%',
+    'terminal-amber': '38 92% 50%',
+    'terminal-red': '0 84% 60%',
+    'terminal-cyan': '199 89% 42%',
   },
   dark: {
     background: '240 10% 3.9%',
@@ -121,6 +137,10 @@ const shadcnDefault: Theme = {
     border: '240 3.7% 15.9%',
     input: '240 3.7% 15.9%',
     ring: '240 4.9% 83.9%',
+    'terminal-green': '142 71% 45%',
+    'terminal-amber': '38 92% 56%',
+    'terminal-red': '0 84% 60%',
+    'terminal-cyan': '199 89% 48%',
   },
 };
 
@@ -147,6 +167,10 @@ const rosePine: Theme = {
     border: '32 15% 82%',
     input: '32 15% 85%',
     ring: '280 36% 54%',
+    'terminal-green': '197 48% 42%',
+    'terminal-amber': '35 88% 50%',
+    'terminal-red': '343 35% 55%',
+    'terminal-cyan': '189 43% 40%',
   },
   dark: {
     background: '249 22% 12%',
@@ -168,6 +192,10 @@ const rosePine: Theme = {
     border: '249 15% 22%',
     input: '249 15% 22%',
     ring: '280 36% 62%',
+    'terminal-green': '197 48% 52%',
+    'terminal-amber': '35 88% 58%',
+    'terminal-red': '343 35% 60%',
+    'terminal-cyan': '189 43% 50%',
   },
 };
 
@@ -194,6 +222,10 @@ const catppuccin: Theme = {
     border: '220 12% 82%',
     input: '220 12% 85%',
     ring: '266 85% 58%',
+    'terminal-green': '115 54% 42%',
+    'terminal-amber': '23 92% 50%',
+    'terminal-red': '347 87% 44%',
+    'terminal-cyan': '183 74% 38%',
   },
   dark: {
     background: '240 21% 15%',
@@ -215,6 +247,10 @@ const catppuccin: Theme = {
     border: '240 17% 24%',
     input: '240 17% 24%',
     ring: '267 84% 81%',
+    'terminal-green': '115 54% 52%',
+    'terminal-amber': '23 92% 56%',
+    'terminal-red': '347 87% 52%',
+    'terminal-cyan': '183 74% 48%',
   },
 };
 
@@ -241,6 +277,10 @@ const nord: Theme = {
     border: '219 15% 78%',
     input: '219 15% 82%',
     ring: '213 32% 52%',
+    'terminal-green': '92 28% 38%',
+    'terminal-amber': '40 71% 48%',
+    'terminal-red': '354 42% 56%',
+    'terminal-cyan': '193 43% 48%',
   },
   dark: {
     background: '220 16% 22%',
@@ -262,6 +302,10 @@ const nord: Theme = {
     border: '220 16% 30%',
     input: '220 16% 30%',
     ring: '213 32% 62%',
+    'terminal-green': '92 28% 48%',
+    'terminal-amber': '40 71% 56%',
+    'terminal-red': '354 42% 60%',
+    'terminal-cyan': '193 43% 55%',
   },
 };
 
