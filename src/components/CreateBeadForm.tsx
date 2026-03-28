@@ -21,9 +21,9 @@ export function CreateBeadForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1 px-2.5 py-1 border border-border text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        className="flex items-center gap-1 px-2.5 py-1.5 border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
-        <Plus className="w-3 h-3" /> new bead
+        <Plus className="w-3.5 h-3.5" /> new bead
       </button>
     );
   }
@@ -40,7 +40,7 @@ export function CreateBeadForm() {
       />
       <button
         type="submit"
-        className="px-2.5 py-1 border border-primary bg-primary text-primary-foreground text-[11px] font-bold hover:bg-primary/90 transition-colors"
+        className="px-2.5 py-1.5 border border-primary bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors"
       >
         add
       </button>
@@ -49,7 +49,7 @@ export function CreateBeadForm() {
         onClick={() => setOpen(false)}
         className="p-1 text-muted-foreground hover:text-foreground transition-colors"
       >
-        <X className="w-3 h-3" />
+        <X className="w-3.5 h-3.5" />
       </button>
     </form>
   );

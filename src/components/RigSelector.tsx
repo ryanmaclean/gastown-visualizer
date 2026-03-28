@@ -12,12 +12,12 @@ export function RigSelector() {
 
   return (
     <div className="flex items-center gap-1">
-      <Box className="w-3.5 h-3.5 text-muted-foreground" />
+      <Box className="w-4 h-4 text-muted-foreground" />
       {rigs.map(([id, rig]) => (
         <button
           key={id}
           onClick={() => setActiveRigId(id)}
-          className={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+          className={`px-2.5 py-1 rounded text-xs font-mono transition-colors ${
             activeRigId === id
               ? 'bg-primary text-primary-foreground'
               : 'text-muted-foreground hover:text-foreground hover:bg-secondary'

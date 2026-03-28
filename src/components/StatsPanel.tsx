@@ -40,13 +40,13 @@ export function StatsPanel() {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-1.5">
-        <PixelChart size={12} />
-        <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Stats</span>
+        <PixelChart size={14} />
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Stats</span>
       </div>
 
       <div className="copland-inset bg-card p-1">
         {statRows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between px-1 py-px text-[9px] font-mono hover:bg-primary hover:text-primary-foreground">
+          <div key={row.label} className="flex items-center justify-between px-1 py-0.5 text-[10px] font-mono hover:bg-primary hover:text-primary-foreground">
             <span className="text-muted-foreground">{row.label}</span>
             <span className="text-foreground">{row.value}</span>
           </div>
@@ -55,8 +55,8 @@ export function StatsPanel() {
 
       {/* Bead distribution bar */}
       <div className="px-1 space-y-0.5">
-        <span className="text-[8px] font-mono text-muted-foreground uppercase">Distribution</span>
-        <div className="copland-inset flex h-2.5 overflow-hidden bg-card p-px">
+        <span className="text-[10px] font-mono text-muted-foreground uppercase">Distribution</span>
+        <div className="copland-inset flex h-3 overflow-hidden bg-card p-px">
           {beadsByStatus.backlog > 0 && (
             <div className="bg-muted-foreground/50" style={{ width: `${(beadsByStatus.backlog / totalBeads) * 100}%` }} />
           )}

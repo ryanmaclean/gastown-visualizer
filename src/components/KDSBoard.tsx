@@ -45,17 +45,17 @@ export function KDSBoard() {
         return (
           <div key={col.key} className="flex flex-col min-h-0 copland-raised bg-background">
             {/* Column title bar */}
-            <div className="flex items-center gap-1.5 px-2 py-1 copland-title-stripes border-b border-border">
-              <span className="text-[10px]">{col.icon}</span>
-              <span className="text-[10px] font-bold text-foreground uppercase tracking-wider flex-1">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 copland-title-stripes border-b border-border">
+              <span className="text-xs">{col.icon}</span>
+              <span className="text-xs font-bold text-foreground uppercase tracking-wider flex-1">
                 {col.label}
               </span>
-              <span className="text-[10px] font-bold text-muted-foreground tabular-nums">{beads.length}</span>
+              <span className="text-xs font-bold text-muted-foreground tabular-nums">{beads.length}</span>
             </div>
 
             {/* Add new — raised button */}
             <div className="px-2 pt-2 pb-1">
-              <button className="w-full copland-raised bg-background px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors flex items-center justify-center gap-1">
+              <button className="w-full copland-raised bg-background px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors flex items-center justify-center gap-1">
                 + add new
               </button>
             </div>

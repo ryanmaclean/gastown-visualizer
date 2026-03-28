@@ -39,7 +39,7 @@ export function ThemeSwitcher() {
         {/* Theme picker */}
         <button
           onClick={() => setOpen(!open)}
-          className="copland-raised bg-background px-2 py-1 text-[10px] text-foreground hover:bg-secondary transition-colors"
+          className="copland-raised bg-background px-2.5 py-1.5 text-xs text-foreground hover:bg-secondary transition-colors"
           title="Switch theme"
         >
           {current.theme.name}
@@ -48,24 +48,24 @@ export function ThemeSwitcher() {
         {/* Light/Dark toggle */}
         <button
           onClick={toggleMode}
-          className="p-1.5 copland-raised bg-background hover:bg-secondary transition-colors"
+          className="p-2 copland-raised bg-background hover:bg-secondary transition-colors"
           aria-label={current.mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {current.mode === 'dark' ? (
-            <Sun className="w-3.5 h-3.5 text-foreground" />
+            <Sun className="w-4 h-4 text-foreground" />
           ) : (
-            <Moon className="w-3.5 h-3.5 text-foreground" />
+            <Moon className="w-4 h-4 text-foreground" />
           )}
         </button>
       </div>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 copland-raised bg-card border border-border min-w-[140px]">
+        <div className="absolute right-0 top-full mt-1 z-50 copland-raised bg-card border border-border min-w-[160px]">
           {themes.map((t) => (
             <button
               key={t.id}
               onClick={() => selectTheme(t)}
-              className={`w-full text-left px-3 py-1.5 text-[10px] hover:bg-secondary transition-colors ${
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-secondary transition-colors ${
                 t.id === current.theme.id ? 'bg-accent text-accent-foreground font-bold' : 'text-foreground'
               }`}
             >
