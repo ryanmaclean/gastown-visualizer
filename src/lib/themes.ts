@@ -167,6 +167,10 @@ const rosePine: Theme = {
     border: '32 15% 82%',
     input: '32 15% 85%',
     ring: '280 36% 54%',
+    'terminal-green': '197 48% 42%',
+    'terminal-amber': '35 88% 50%',
+    'terminal-red': '343 35% 55%',
+    'terminal-cyan': '189 43% 40%',
   },
   dark: {
     background: '249 22% 12%',
