@@ -82,6 +82,10 @@ const coplandPlatinum: Theme = {
     border: '220 10% 22%',
     input: '220 10% 22%',
     ring: '220 55% 58%',
+    'terminal-green': '145 40% 48%',
+    'terminal-amber': '30 75% 52%',
+    'terminal-red': '0 60% 52%',
+    'terminal-cyan': '200 35% 50%',
   },
 };
 
