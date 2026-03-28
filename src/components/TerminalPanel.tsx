@@ -143,6 +143,18 @@ export function TerminalPanel() {
 
   const { supervisor } = useGasTown();
 
+  // Re-theme terminals when theme changes
+  useEffect(() => {
+    const onThemeChanged = () => {
+      const newTheme = buildTerminalTheme();
+      logsTermRef.current?.term.options.theme && (logsTermRef.current.term.options.theme = newTheme);
+      inferenceTermRef.current?.term.options.theme && (inferenceTermRef.current.term.options.theme = newTheme);
+      replTermRef.current?.term.options.theme && (replTermRef.current.term.options.theme = newTheme);
+    };
+    window.addEventListener('theme-changed', onThemeChanged);
+    return () => window.removeEventListener('theme-changed', onThemeChanged);
+  }, []);
+
   useEffect(() => {
     if (isCollapsed) return;
 
