@@ -8,63 +8,14 @@ import '@xterm/xterm/css/xterm.css';
 import { pubsub } from '../lib/otp/pubsub';
 import { useGasTown } from '../context/GasTownContext';
 import { GasTownShell } from '../lib/shell';
+import { buildTerminalThemeFromDocument } from '../lib/terminalTheme';
 
 type TabId = 'logs' | 'inference' | 'repl';
-
-function hslVarToHex(varName: string): string {
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-  if (!raw) return '#000000';
-  const parts = raw.split(/\s+/);
-  const h = parseFloat(parts[0]) || 0;
-  const s = (parseFloat(parts[1]) || 0) / 100;
-  const l = (parseFloat(parts[2]) || 0) / 100;
-  const a = s * Math.min(l, 1 - l);
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(c * 255).toString(16).padStart(2, '0');
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function buildTerminalTheme(): Record<string, string> {
-  const bg = hslVarToHex('--background');
-  const fg = hslVarToHex('--foreground');
-  const green = hslVarToHex('--terminal-green');
-  const amber = hslVarToHex('--terminal-amber');
-  const red = hslVarToHex('--terminal-red');
-  const cyan = hslVarToHex('--terminal-cyan');
-  const primary = hslVarToHex('--primary');
-  const muted = hslVarToHex('--muted-foreground');
-  return {
-    background: bg,
-    foreground: green,
-    cursor: green,
-    cursorAccent: bg,
-    selectionBackground: green + '40',
-    black: bg,
-    red,
-    green,
-    yellow: amber,
-    blue: primary,
-    magenta: hslVarToHex('--accent-foreground'),
-    cyan,
-    white: fg,
-    brightBlack: muted,
-    brightRed: red,
-    brightGreen: green,
-    brightYellow: amber,
-    brightBlue: primary,
-    brightMagenta: hslVarToHex('--accent-foreground'),
-    brightCyan: cyan,
-    brightWhite: hslVarToHex('--card-foreground'),
-  };
-}
 
 function createTerminal(): { term: Terminal; fit: FitAddon } {
   const fit = new FitAddon();
   const term = new Terminal({
-    theme: buildTerminalTheme(),
+    theme: buildTerminalThemeFromDocument(),
     fontFamily: '"JetBrains Mono", monospace',
     fontSize: 12,
     lineHeight: 1.3,
@@ -86,7 +37,7 @@ function colorize(text: string, color: string): string {
   const codes: Record<string, string> = {
     green: '\x1b[32m', yellow: '\x1b[33m', red: '\x1b[31m',
     blue: '\x1b[34m', cyan: '\x1b[36m', magenta: '\x1b[35m',
-    dim: '\x1b[2m', bold: '\x1b[1m', reset: '\x1b[0m',
+    dim: '\x1b[90m', bold: '\x1b[1m', reset: '\x1b[0m',
   };
   return `${codes[color] || ''}${text}${codes.reset}`;
 }
@@ -146,10 +97,13 @@ export function TerminalPanel() {
   // Re-theme terminals when theme changes
   useEffect(() => {
     const onThemeChanged = () => {
-      const newTheme = buildTerminalTheme();
-      logsTermRef.current?.term.options.theme && (logsTermRef.current.term.options.theme = newTheme);
-      inferenceTermRef.current?.term.options.theme && (inferenceTermRef.current.term.options.theme = newTheme);
-      replTermRef.current?.term.options.theme && (replTermRef.current.term.options.theme = newTheme);
+      const newTheme = buildTerminalThemeFromDocument();
+      const terms = [logsTermRef.current?.term, inferenceTermRef.current?.term, replTermRef.current?.term].filter(Boolean) as Terminal[];
+
+      for (const term of terms) {
+        term.options.theme = newTheme;
+        term.refresh(0, Math.max(term.rows - 1, 0));
+      }
     };
     window.addEventListener('theme-changed', onThemeChanged);
     return () => window.removeEventListener('theme-changed', onThemeChanged);
