@@ -12,10 +12,10 @@ const ANSI = {
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
   magenta: '\x1b[35m',
-  dim: '\x1b[2m',
+  dim: '\x1b[90m',
   bold: '\x1b[1m',
   reset: '\x1b[0m',
-  ghostFg: '\x1b[38;5;240m', // dark gray for ghost text
+  ghostFg: '\x1b[90m', // theme-aware muted tone via xterm brightBlack
   saveCursor: '\x1b[s',
   restoreCursor: '\x1b[u',
 } as const;

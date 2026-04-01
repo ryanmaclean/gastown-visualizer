@@ -1,7 +1,8 @@
 // WCAG AA contrast ratio tests for all registered themes
 
 import { describe, it, expect } from 'vitest';
-import { themes, Theme } from '../lib/themes';
+import { themes } from '../lib/themes';
+import { buildTerminalThemeFromVars } from '../lib/terminalTheme';
 
 function hslToRgb(h: number, s: number, l: number): [number, number, number] {
   s /= 100;
@@ -42,6 +43,20 @@ function checkContrast(fg: string, bg: string): number {
   return contrastRatio(getLuminance(fg), getLuminance(bg));
 }
 
+function getHexLuminance(hex: string): number {
+  const normalized = hex.replace('#', '');
+  const full = normalized.length === 3
+    ? normalized.split('').map(char => char + char).join('')
+    : normalized;
+
+  const rgb = [0, 2, 4].map(index => parseInt(full.slice(index, index + 2), 16) / 255);
+  return relativeLuminance(rgb[0], rgb[1], rgb[2]);
+}
+
+function checkHexContrast(fg: string, bg: string): number {
+  return contrastRatio(getHexLuminance(fg), getHexLuminance(bg));
+}
+
 // Test pairs: [fg key, bg key, minimum ratio]
 const pairs: [string, string, number][] = [
   ['foreground', 'background', 4.5],
@@ -61,6 +76,24 @@ for (const theme of themes) {
         it(`${fgKey} on ${bgKey} ≥ ${minRatio}:1`, () => {
           const ratio = checkContrast(vars[fgKey], vars[bgKey]);
           expect(ratio).toBeGreaterThanOrEqual(minRatio);
+        });
+      }
+    });
+
+    describe(`Terminal palette — ${theme.name} (${modeName})`, () => {
+      const terminalTheme = buildTerminalThemeFromVars(vars);
+
+      it('default text on terminal background ≥ 4.5:1', () => {
+        expect(checkHexContrast(terminalTheme.foreground, terminalTheme.background)).toBeGreaterThanOrEqual(4.5);
+      });
+
+      it('muted ghost text on terminal background ≥ 3:1', () => {
+        expect(checkHexContrast(terminalTheme.brightBlack, terminalTheme.background)).toBeGreaterThanOrEqual(3);
+      });
+
+      for (const key of ['green', 'yellow', 'red', 'blue', 'magenta', 'cyan'] as const) {
+        it(`${key} ANSI color on terminal background ≥ 4.5:1`, () => {
+          expect(checkHexContrast(terminalTheme[key], terminalTheme.background)).toBeGreaterThanOrEqual(4.5);
         });
       }
     });
