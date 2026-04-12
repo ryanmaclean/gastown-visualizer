@@ -69,8 +69,8 @@ export function ModelSelector() {
       )}
 
       {!stats.isLoaded && !stats.isLoading && (
-        <div className="text-xs text-muted-foreground/60 font-mono">
-          No model loaded — using mock inference
+        <div className="text-[10px] text-muted-foreground/60 font-mono leading-tight">
+          No model loaded — mock inference active
         </div>
       )}
 
