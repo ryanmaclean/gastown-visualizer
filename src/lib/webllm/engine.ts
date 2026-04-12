@@ -1,6 +1,6 @@
 // WebLLM Engine wrapper — single MLCEngine instance with streaming support
 
-import type { MLCEngine, InitProgressReport } from '@mlc-ai/web-llm';
+import type { MLCEngine, InitProgressReport, AppConfig } from '@mlc-ai/web-llm';
 
 export interface EngineStats {
   modelId: string;
@@ -42,13 +42,22 @@ class WebLLMEngine {
 
       const startTime = performance.now();
 
-      this.engine = await CreateMLCEngine(modelId, {
+      // Build appConfig with custom models that aren't in the built-in list
+      const customModel = CUSTOM_MODEL_CONFIGS[modelId];
+      const engineConfig: any = {
         initProgressCallback: (progress: InitProgressReport) => {
           this.stats.loadProgress = progress.progress || 0;
           this.notifyProgress(progress);
           this.notifyStats();
         },
-      });
+      };
+      if (customModel) {
+        engineConfig.appConfig = {
+          model_list: [customModel],
+        } as AppConfig;
+      }
+
+      this.engine = await CreateMLCEngine(modelId, engineConfig);
 
       const loadTimeMs = performance.now() - startTime;
 
@@ -154,8 +163,21 @@ class WebLLMEngine {
 
 export const webllmEngine = new WebLLMEngine();
 
+// Custom model configs for models not in WebLLM's built-in list
+const GEMMA4_REPO = 'https://huggingface.co/welcoma/gemma-4-E2B-it-q4f16_1-MLC';
+
+const CUSTOM_MODEL_CONFIGS: Record<string, any> = {
+  'gemma-4-E2B-it-q4f16_1-MLC': {
+    model: GEMMA4_REPO,
+    model_id: 'gemma-4-E2B-it-q4f16_1-MLC',
+    model_lib: `${GEMMA4_REPO}/resolve/main/libs/gemma-4-E2B-it-q4f16_1-MLC-webgpu.wasm`,
+    required_features: ['shader-f16'] as string[],
+  },
+};
+
 // Available models — Qwen3.5 not yet in WebLLM (issue #778), Qwen3 up to 8B available
 export const AVAILABLE_MODELS = [
+  { id: 'gemma-4-E2B-it-q4f16_1-MLC', name: 'Gemma 4 E2B', vram: '~2.7GB', description: '⚡ Experimental — custom fork, text-only' },
   { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~400MB', description: 'Fast, lightweight — good for multi-worker' },
   { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~1GB', description: 'Balanced speed/quality' },
   { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~2.5GB', description: 'Good quality, moderate speed' },
