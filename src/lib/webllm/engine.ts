@@ -33,6 +33,24 @@ class WebLLMEngine {
     if (this.stats.isLoading) return;
     if (this.stats.isLoaded && this.stats.modelId === modelId) return;
 
+    // Check WebGPU availability before attempting to load
+    if (!navigator.gpu) {
+      throw new Error('WebGPU is not supported in this browser. Please use Chrome 113+ or Edge 113+.');
+    }
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) {
+      throw new Error('No WebGPU adapter found. Your GPU may not be supported.');
+    }
+
+    // Check shader-f16 for models that require it
+    const customModel = CUSTOM_MODEL_CONFIGS[modelId];
+    if (customModel?.required_features?.includes('shader-f16')) {
+      const features = adapter.features;
+      if (!features.has('shader-f16')) {
+        throw new Error(`Model "${modelId}" requires shader-f16 which is not supported by your GPU.`);
+      }
+    }
+
     this.stats = { ...this.stats, isLoading: true, loadProgress: 0, modelId };
     this.notifyStats();
 
