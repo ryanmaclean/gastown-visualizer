@@ -1,4 +1,4 @@
-// GasTownContext — provides the actor system to React tree
+// GasTownContext — provides the actor system and model loading to React tree
 
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { Supervisor } from '../lib/otp/supervisor';
