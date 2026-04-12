@@ -22,36 +22,34 @@ export function ModelSelector() {
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <select
-          value={selectedModel}
-          onChange={(e) => setSelectedModel(e.target.value as ModelId)}
-          disabled={stats.isLoading}
-          className="bg-secondary border border-border rounded text-xs text-foreground px-2.5 py-1.5 font-mono focus:outline-none focus:ring-1 focus:ring-ring flex-1"
-        >
-          {AVAILABLE_MODELS.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name} ({m.vram})
-            </option>
-          ))}
-        </select>
+    <div className="space-y-1.5">
+      <select
+        value={selectedModel}
+        onChange={(e) => setSelectedModel(e.target.value as ModelId)}
+        disabled={stats.isLoading}
+        className="w-full bg-secondary border border-border rounded text-xs text-foreground px-2 py-1.5 font-mono focus:outline-none focus:ring-1 focus:ring-ring"
+      >
+        {AVAILABLE_MODELS.map((m) => (
+          <option key={m.id} value={m.id}>
+            {m.name} ({m.vram})
+          </option>
+        ))}
+      </select>
 
-        <button
-          onClick={handleLoad}
-          disabled={stats.isLoading || (stats.isLoaded && stats.modelId === selectedModel)}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded border border-border text-xs font-mono hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-foreground"
-        >
-          {stats.isLoading ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : stats.isLoaded && stats.modelId === selectedModel ? (
-            <Check className="w-3.5 h-3.5 text-primary" />
-          ) : (
-            <Download className="w-3.5 h-3.5" />
-          )}
-          {stats.isLoading ? 'Loading...' : stats.isLoaded && stats.modelId === selectedModel ? 'Loaded' : 'Load'}
-        </button>
-      </div>
+      <button
+        onClick={handleLoad}
+        disabled={stats.isLoading || (stats.isLoaded && stats.modelId === selectedModel)}
+        className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded border border-border text-xs font-mono hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-foreground"
+      >
+        {stats.isLoading ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : stats.isLoaded && stats.modelId === selectedModel ? (
+          <Check className="w-3.5 h-3.5 text-primary" />
+        ) : (
+          <Download className="w-3.5 h-3.5" />
+        )}
+        {stats.isLoading ? 'Loading...' : stats.isLoaded && stats.modelId === selectedModel ? 'Loaded' : 'Load Model'}
+      </button>
 
       {/* Progress bar */}
       {stats.isLoading && (

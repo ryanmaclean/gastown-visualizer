@@ -54,6 +54,7 @@ class WebLLMEngine {
       if (customModel) {
         engineConfig.appConfig = {
           model_list: [customModel],
+          useIndexedDBCache: false,
         } as AppConfig;
       }
 
