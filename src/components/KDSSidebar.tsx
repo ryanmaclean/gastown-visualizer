@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ModelSelector } from './ModelSelector';
+import { WebGPUBadge } from './WebGPUBadge';
 import { PolecatPanel } from './PolecatPanel';
 import { MayorPanel } from './MayorPanel';
 import { StatsPanel } from './StatsPanel';
