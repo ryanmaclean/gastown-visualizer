@@ -215,6 +215,7 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
               <div className="flex items-center gap-1.5 mb-1.5">
                 <PixelChip size={14} />
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Engine</span>
+                <span className="ml-auto"><WebGPUBadge /></span>
               </div>
               <ModelSelector />
             </div>
