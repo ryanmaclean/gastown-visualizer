@@ -11,6 +11,7 @@ import { MayorPanel } from './MayorPanel';
 import { StatsPanel } from './StatsPanel';
 import { PixelFolder, PixelGear, PixelChip, PixelShield, PixelChart, WindowCloseBox, WindowZoomBox, AgentIcon } from './CoplandIcons';
 import { Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useGasTown } from '../context/GasTownContext';
 
 const boards = [
   { id: 'rig_alpha', label: 'Alpha Rig', letter: 'A' },
