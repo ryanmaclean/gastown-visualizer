@@ -116,6 +116,7 @@ function SidebarTriggerButton({ onClick }: { onClick: () => void }) {
 // Main sidebar content — adapts to mode
 function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onToggle: () => void; showClose?: boolean }) {
   const isIcon = mode === 'icon';
+  const { activeRigId, setActiveRigId } = useGasTown();
 
   return (
     <>
