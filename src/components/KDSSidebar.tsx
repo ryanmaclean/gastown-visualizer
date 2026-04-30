@@ -156,19 +156,23 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
       <div className={`px-2 py-2 border-b border-border ${isIcon ? 'px-1' : ''}`}>
         {!isIcon && <span className="px-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Rigs</span>}
         <div className={`${isIcon ? 'space-y-1 mt-0' : 'mt-1.5 copland-inset bg-card p-0.5'}`}>
-          {boards.map(b => (
-            <button
-              key={b.id}
-              className={`${isIcon
-                ? 'w-full flex items-center justify-center py-2 hover:bg-primary hover:text-primary-foreground transition-colors'
-                : 'w-full flex items-center gap-2 px-2 py-1.5 text-xs text-foreground hover:bg-primary hover:text-primary-foreground transition-colors'
-              }`}
-              title={b.label}
-            >
-              <PixelFolder size={16} />
-              {!isIcon && <span className="flex-1 text-left truncate">{b.label}</span>}
-            </button>
-          ))}
+          {boards.map(b => {
+            const active = activeRigId === b.id;
+            return (
+              <button
+                key={b.id}
+                onClick={() => setActiveRigId(b.id)}
+                className={`${isIcon
+                  ? `w-full flex items-center justify-center py-2 transition-colors ${active ? 'bg-primary text-primary-foreground' : 'hover:bg-primary hover:text-primary-foreground'}`
+                  : `w-full flex items-center gap-2 px-2 py-1.5 text-xs transition-colors ${active ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-primary hover:text-primary-foreground'}`
+                }`}
+                title={b.label}
+              >
+                <PixelFolder size={16} />
+                {!isIcon && <span className="flex-1 text-left truncate">{b.label}</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
 
