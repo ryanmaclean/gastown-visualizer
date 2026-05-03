@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Bead, PolecatState } from '../actors/types';
 import { useEtsLookup } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
-import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock } from 'lucide-react';
+import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock, X } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   backlog: { label: 'BACKLOG', color: 'text-muted-foreground', icon: <Clock className="w-3 h-3" /> },
