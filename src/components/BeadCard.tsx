@@ -17,7 +17,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
 export function BeadCard({ bead }: { bead: Bead }) {
   const [expanded, setExpanded] = useState(false);
   const polecat = useEtsLookup<PolecatState>('polecats', bead.assignedTo);
-  const { assignBeadToPolecat } = useGasTown();
+  const { assignBeadToPolecat, abortBead } = useGasTown();
   const config = statusConfig[bead.status] || statusConfig.backlog;
 
   return (
