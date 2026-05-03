@@ -102,10 +102,9 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
   }, [activeRigId]);
 
   const assignBeadToPolecat = useCallback((beadId: string) => {
-    const sup = supervisorRef.current;
+    const sup = supervisor;
     if (!sup) return;
 
-    // Find an idle polecat by walking supervisor children directly (pid != name).
     const children = sup.whichChildren().filter(c => c.name.startsWith('polecat_'));
     for (const child of children) {
       const actor = sup.getChild(child.name);
@@ -117,7 +116,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
         return;
       }
     }
-  }, []);
+  }, [supervisor]);
 
   const autoAssignBacklog = useCallback(() => {
     const beadsTable = ets.get<Bead>('beads');
