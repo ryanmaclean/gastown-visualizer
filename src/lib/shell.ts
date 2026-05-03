@@ -130,7 +130,85 @@ function buildCommands(): CommandDef[] {
       description: 'Show command history',
       execute() { /* handled inline by shell */ },
     },
+    {
+      name: 'selftest',
+      description: 'Run end-to-end smoke test (boot→seed→assign→merge)',
+      execute(term, _args, ctx) {
+        runSelfTest(term, ctx).catch(e => {
+          term.writeln(c(`selftest crashed: ${e?.message || e}`, 'red'));
+        });
+      },
+    },
   ];
+}
+
+// ── Self-test ─────────────────────────────────────────────────
+
+async function runSelfTest(term: Terminal, ctx: ShellContext): Promise<void> {
+  const results: Array<{ name: string; pass: boolean; detail?: string }> = [];
+  const check = (name: string, pass: boolean, detail?: string) => {
+    results.push({ name, pass, detail });
+    term.writeln(`  ${pass ? c('✔', 'green') : c('✖', 'red')} ${name}${detail ? c(` — ${detail}`, 'dim') : ''}`);
+  };
+
+  term.writeln(c('▶ Running Gas Town self-test…', 'bold'));
+
+  // 1. Supervisor up
+  check('supervisor running', !!ctx.supervisor, ctx.supervisor ? `${ctx.supervisor.whichChildren().length} children` : 'missing');
+  if (!ctx.supervisor) return summarize(term, results);
+
+  // 2. ETS tables present
+  const required = ['beads', 'polecats', 'rigs', 'scheduler'];
+  for (const t of required) check(`ets table "${t}"`, !!ets.get(t));
+
+  // 3. Polecats registered
+  const polecatsTable = ets.get('polecats');
+  const polecatCount = polecatsTable?.size() ?? 0;
+  check('polecats registered', polecatCount > 0, `${polecatCount} polecat(s)`);
+
+  // 4. Seed a probe bead through Rig Alpha
+  const rig: any = ctx.supervisor.getChild('rig_alpha');
+  check('rig_alpha child', !!rig);
+  if (!rig) return summarize(term, results);
+
+  const beadsTable = ets.get<import('../actors/types').Bead>('beads');
+  const beforeIds = new Set(beadsTable?.tab2list().map(([k]) => k) ?? []);
+  rig.cast('create_bead', { type: 'create_bead', title: '[selftest] probe', description: 'self-test probe bead' });
+
+  // Wait one tick for actor to process
+  await new Promise(r => setTimeout(r, 50));
+  const newEntry = beadsTable?.tab2list().find(([k]) => !beforeIds.has(k));
+  const probeId = newEntry?.[0];
+  check('bead created', !!probeId, probeId);
+
+  if (!probeId) return summarize(term, results);
+
+  // 5. Wait for it to reach a terminal state (merged or backlog cycle).
+  const TIMEOUT_MS = 12000;
+  const start = performance.now();
+  let finalStatus: string | undefined;
+  while (performance.now() - start < TIMEOUT_MS) {
+    const b = beadsTable?.lookup(probeId);
+    if (b && (b.status === 'merged' || b.status === 'refinery')) {
+      finalStatus = b.status;
+      if (b.status === 'merged') break;
+    }
+    await new Promise(r => setTimeout(r, 200));
+  }
+  check('bead progressed past backlog', !!finalStatus, finalStatus || 'still in backlog (no idle polecat? or no inference path)');
+
+  // 6. Cleanup
+  rig.cast('remove_bead', { type: 'remove_bead', beadId: probeId });
+
+  summarize(term, results);
+}
+
+function summarize(term: Terminal, results: Array<{ name: string; pass: boolean }>) {
+  const pass = results.filter(r => r.pass).length;
+  const fail = results.length - pass;
+  term.writeln('');
+  const color = fail === 0 ? 'green' : 'red';
+  term.writeln(c(`Result: ${pass} passed, ${fail} failed`, color));
 }
 
 // ── Shell ─────────────────────────────────────────────────────

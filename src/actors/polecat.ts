@@ -10,7 +10,9 @@ import { Bead, PolecatState } from './types';
 const POLECAT_NAMES = ['Rusty', 'Patches', 'Bandit', 'Whiskers', 'Shadow', 'Dusty', 'Copper', 'Grit'];
 const POLECAT_AVATARS = ['🦝', '🦊', '🐺', '🦡', '🐻', '🦫', '🦨', '🐾'];
 
+// Module-level counter — reset on HMR / fresh boot via resetPolecatIndex().
 let polecatIndex = 0;
+export function resetPolecatIndex() { polecatIndex = 0; }
 
 type PolecatMsg =
   | { type: 'assign_bead'; beadId: string }
@@ -49,6 +51,15 @@ export class PolecatActor extends Actor<PolecatState, PolecatMsg> {
       pubsub.subscribe('mayor:reassign', (data: { beadId: string; toPid: string }) => {
         if (data.toPid === this.pid) {
           this.cast('assign_bead', { type: 'assign_bead', beadId: data.beadId } as any);
+        }
+      })
+    );
+
+    // Release ownership when refinery sends a bead back
+    this.unsubscribers.push(
+      pubsub.subscribe('bead:released', (data: { beadId: string; polecatPid: string }) => {
+        if (data.polecatPid === this.pid && this.state.currentBeadId === data.beadId) {
+          this.cast('abort_bead', { type: 'abort_bead' } as any);
         }
       })
     );
