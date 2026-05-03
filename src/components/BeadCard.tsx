@@ -93,6 +93,16 @@ export function BeadCard({ bead }: { bead: Bead }) {
           ▶ Assign Polecat
         </button>
       )}
+
+      {/* Abort button for in-progress */}
+      {bead.status === 'in_progress' && (
+        <button
+          onClick={() => abortBead(bead.id)}
+          className="w-full flex items-center justify-center gap-1 text-xs py-1 rounded border border-border hover:border-destructive hover:text-destructive transition-colors text-muted-foreground"
+        >
+          <X className="w-3 h-3" /> Abort
+        </button>
+      )}
     </div>
   );
 }
