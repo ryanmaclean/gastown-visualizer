@@ -134,7 +134,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <GasTownContext.Provider value={{
-      supervisor: supervisorRef.current,
+      supervisor,
       isReady,
       activeRigId,
       setActiveRigId,
