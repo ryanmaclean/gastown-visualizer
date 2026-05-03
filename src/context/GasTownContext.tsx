@@ -25,12 +25,15 @@ interface GasTownContextValue {
 const GasTownContext = createContext<GasTownContextValue | null>(null);
 
 export function GasTownProvider({ children }: { children: React.ReactNode }) {
-  const supervisorRef = useRef<Supervisor | null>(null);
   const rigActorsRef = useRef<Map<string, RigActor>>(new Map());
+  const [supervisor, setSupervisor] = useState<Supervisor | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [activeRigId, setActiveRigId] = useState('rig_alpha');
 
   useEffect(() => {
+    let cancelled = false;
+    let localSupervisor: Supervisor | null = null;
+
     const boot = async () => {
       // Initialize ETS tables
       ets.new<Bead>('beads');
@@ -40,39 +43,32 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       ets.new('escalations');
       ets.new('stats');
 
-      const supervisor = new Supervisor('gastown');
+      const sup = new Supervisor('gastown');
+      localSupervisor = sup;
       resetPolecatIndex();
-      await supervisor.start();
+      await sup.start();
+      if (cancelled) { await sup.stop(); return; }
 
-      // Start Mayor
-      await supervisor.startChild({ name: 'mayor', factory: () => new MayorActor() });
+      await sup.startChild({ name: 'mayor', factory: () => new MayorActor() });
 
-      // Start Polecats (4 by default)
       for (let i = 0; i < 4; i++) {
-        await supervisor.startChild({
-          name: `polecat_${i}`,
-          factory: () => new PolecatActor(),
-        });
+        await sup.startChild({ name: `polecat_${i}`, factory: () => new PolecatActor() });
       }
 
-      // Start Rigs
       const rigNames = ['Alpha', 'Beta', 'Gamma'];
+      rigActorsRef.current.clear();
       for (const name of rigNames) {
         const rig = new RigActor(name);
         rigActorsRef.current.set(`rig_${name.toLowerCase()}`, rig);
-        await supervisor.startChild({
-          name: `rig_${name.toLowerCase()}`,
-          factory: () => rig,
-        });
+        await sup.startChild({ name: `rig_${name.toLowerCase()}`, factory: () => rig });
       }
 
-      // Start Refinery
-      await supervisor.startChild({ name: 'refinery', factory: () => new RefineryActor() });
+      await sup.startChild({ name: 'refinery', factory: () => new RefineryActor() });
 
-      supervisorRef.current = supervisor;
+      if (cancelled) { await sup.stop(); return; }
+      setSupervisor(sup);
       setIsReady(true);
 
-      // Seed some demo beads
       const alphaRig = rigActorsRef.current.get('rig_alpha');
       if (alphaRig) {
         const demoBeads = [
@@ -91,7 +87,8 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
     boot();
 
     return () => {
-      supervisorRef.current?.stop();
+      cancelled = true;
+      localSupervisor?.stop();
       ets.clear();
       pubsub.clear();
     };
