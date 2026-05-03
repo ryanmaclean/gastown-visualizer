@@ -3,6 +3,7 @@
 import { Terminal } from '@xterm/xterm';
 import { pubsub } from './otp/pubsub';
 import { ets } from './otp/ets';
+import { webllmEngine } from './webllm/engine';
 import type { Supervisor } from './otp/supervisor';
 
 const ANSI = {
