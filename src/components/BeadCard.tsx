@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Bead, PolecatState } from '../actors/types';
 import { useEtsLookup } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
-import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock } from 'lucide-react';
+import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock, X } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   backlog: { label: 'BACKLOG', color: 'text-muted-foreground', icon: <Clock className="w-3 h-3" /> },
@@ -17,7 +17,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
 export function BeadCard({ bead }: { bead: Bead }) {
   const [expanded, setExpanded] = useState(false);
   const polecat = useEtsLookup<PolecatState>('polecats', bead.assignedTo);
-  const { assignBeadToPolecat } = useGasTown();
+  const { assignBeadToPolecat, abortBead } = useGasTown();
   const config = statusConfig[bead.status] || statusConfig.backlog;
 
   return (
@@ -91,6 +91,16 @@ export function BeadCard({ bead }: { bead: Bead }) {
           className="w-full text-xs py-1 rounded border border-border hover:border-primary hover:text-primary transition-colors text-muted-foreground"
         >
           ▶ Assign Polecat
+        </button>
+      )}
+
+      {/* Abort button for in-progress */}
+      {bead.status === 'in_progress' && (
+        <button
+          onClick={() => abortBead(bead.id)}
+          className="w-full flex items-center justify-center gap-1 text-xs py-1 rounded border border-border hover:border-destructive hover:text-destructive transition-colors text-muted-foreground"
+        >
+          <X className="w-3 h-3" /> Abort
         </button>
       )}
     </div>

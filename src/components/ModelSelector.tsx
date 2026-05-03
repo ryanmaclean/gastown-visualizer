@@ -1,6 +1,7 @@
 // ModelSelector — dropdown for WebLLM model selection with progress
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type ModelId } from '../lib/webllm/engine';
 import { useEngineStats } from '../hooks/useScheduler';
 import { useGasTown } from '../context/GasTownContext';
@@ -14,10 +15,15 @@ export function ModelSelector() {
 
   const handleLoad = async () => {
     setError(null);
+    const model = AVAILABLE_MODELS.find(m => m.id === selectedModel);
+    const tId = toast.loading(`Loading ${model?.name ?? selectedModel}…`);
     try {
       await loadModel(selectedModel);
+      toast.success(`${model?.name ?? selectedModel} loaded`, { id: tId });
     } catch (e: any) {
-      setError(e.message || 'Failed to load model');
+      const msg = e?.message || 'Failed to load model';
+      setError(msg);
+      toast.error(msg, { id: tId, duration: 8000 });
     }
   };
 

@@ -18,6 +18,7 @@ interface GasTownContextValue {
   setActiveRigId: (id: string) => void;
   createBead: (title: string, description: string) => void;
   assignBeadToPolecat: (beadId: string) => void;
+  abortBead: (beadId: string) => void;
   loadModel: (modelId: ModelId) => Promise<void>;
   autoAssignBacklog: () => void;
 }
@@ -28,7 +29,14 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
   const rigActorsRef = useRef<Map<string, RigActor>>(new Map());
   const [supervisor, setSupervisor] = useState<Supervisor | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [activeRigId, setActiveRigId] = useState('rig_alpha');
+  const [activeRigId, setActiveRigIdState] = useState<string>(() => {
+    try { return localStorage.getItem('gastown:activeRigId') || 'rig_alpha'; }
+    catch { return 'rig_alpha'; }
+  });
+  const setActiveRigId = useCallback((id: string) => {
+    setActiveRigIdState(id);
+    try { localStorage.setItem('gastown:activeRigId', id); } catch {}
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -118,6 +126,23 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supervisor]);
 
+  const abortBead = useCallback((beadId: string) => {
+    const sup = supervisor;
+    if (!sup) return;
+    const beadsTable = ets.get<Bead>('beads');
+    const bead = beadsTable?.lookup(beadId);
+    if (!bead?.assignedTo) return;
+    const children = sup.whichChildren().filter(c => c.name.startsWith('polecat_'));
+    const child = children.find(c => c.pid === bead.assignedTo);
+    if (!child) return;
+    const actor = sup.getChild(child.name);
+    actor?.cast('abort_bead', { type: 'abort_bead' } as any);
+    if (beadsTable) {
+      beadsTable.insert(beadId, { ...bead, status: 'backlog', assignedTo: null, updatedAt: Date.now() });
+      pubsub.broadcast('bead:updated', { beadId, status: 'backlog' });
+    }
+  }, [supervisor]);
+
   const autoAssignBacklog = useCallback(() => {
     const beadsTable = ets.get<Bead>('beads');
     if (!beadsTable) return;
@@ -140,6 +165,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       setActiveRigId,
       createBead,
       assignBeadToPolecat,
+      abortBead,
       loadModel,
       autoAssignBacklog,
     }}>

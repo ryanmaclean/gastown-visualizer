@@ -3,6 +3,7 @@
 import { Terminal } from '@xterm/xterm';
 import { pubsub } from './otp/pubsub';
 import { ets } from './otp/ets';
+import { webllmEngine } from './webllm/engine';
 import type { Supervisor } from './otp/supervisor';
 
 const ANSI = {
@@ -139,6 +140,15 @@ function buildCommands(): CommandDef[] {
         });
       },
     },
+    {
+      name: 'engine.ping',
+      description: 'Generate 8 tokens via real WebLLM engine to confirm WebGPU path',
+      execute(term) {
+        runEnginePing(term).catch(e => {
+          term.writeln(c(`engine.ping crashed: ${e?.message || e}`, 'red'));
+        });
+      },
+    },
   ];
 }
 
@@ -225,6 +235,47 @@ function summarize(term: Terminal, results: Array<{ name: string; pass: boolean 
   term.writeln('');
   const color = fail === 0 ? 'green' : 'red';
   term.writeln(c(`Result: ${pass} passed, ${fail} failed`, color));
+}
+
+// ── Engine ping ───────────────────────────────────────────────
+
+async function runEnginePing(term: Terminal): Promise<void> {
+  term.writeln(c('▶ Engine ping…', 'bold'));
+
+  if (!('gpu' in navigator)) {
+    term.writeln(`  ${c('✖', 'red')} WebGPU not available in this browser`);
+    return;
+  }
+
+  const stats = webllmEngine.getStats();
+  if (!stats.isLoaded) {
+    term.writeln(`  ${c('✖', 'red')} no model loaded — pick one in the sidebar and click "Load Model"`);
+    return;
+  }
+
+  term.writeln(`  ${c('•', 'dim')} model: ${c(stats.modelId, 'cyan')}`);
+  term.write('  ');
+  const start = performance.now();
+  let count = 0;
+  try {
+    const ctrl = new AbortController();
+    await webllmEngine.generate(
+      'Reply with exactly: pong',
+      (tok) => {
+        count++;
+        term.write(c(tok, 'green'));
+        if (count >= 8) ctrl.abort();
+      },
+      ctrl.signal,
+      8,
+    );
+    const elapsed = (performance.now() - start) / 1000;
+    term.writeln('');
+    term.writeln(`  ${c('✔', 'green')} ${count} tokens in ${elapsed.toFixed(2)}s ${c(`(${(count / elapsed).toFixed(1)} t/s)`, 'dim')}`);
+  } catch (e: any) {
+    term.writeln('');
+    term.writeln(`  ${c('✖', 'red')} ${e?.message || e}`);
+  }
 }
 
 // ── Shell ─────────────────────────────────────────────────────
