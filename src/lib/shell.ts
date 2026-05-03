@@ -141,6 +141,15 @@ function buildCommands(): CommandDef[] {
       },
     },
     {
+      name: 'selftest.e2e',
+      description: 'End-to-end agent test: seed → assign → stream tokens → merge',
+      execute(term, _args, ctx) {
+        runE2ETest(term, ctx).catch(e => {
+          term.writeln(c(`selftest.e2e crashed: ${e?.message || e}`, 'red'));
+        });
+      },
+    },
+    {
       name: 'engine.ping',
       description: 'Generate 8 tokens via real WebLLM engine to confirm WebGPU path',
       execute(term) {
@@ -150,6 +159,76 @@ function buildCommands(): CommandDef[] {
       },
     },
   ];
+}
+
+// ── E2E agent test ────────────────────────────────────────────
+
+async function runE2ETest(term: Terminal, ctx: ShellContext): Promise<void> {
+  const results: Array<{ name: string; pass: boolean; detail?: string }> = [];
+  const check = (name: string, pass: boolean, detail?: string) => {
+    results.push({ name, pass, detail });
+    term.writeln(`  ${pass ? c('✔', 'green') : c('✖', 'red')} ${name}${detail ? c(` — ${detail}`, 'dim') : ''}`);
+  };
+
+  term.writeln(c('▶ Running e2e agent test…', 'bold'));
+  if (!ctx.supervisor) { check('supervisor', false, 'missing'); return summarize(term, results); }
+
+  const engineStats = webllmEngine.getStats();
+  const mode = engineStats.isLoaded ? `real (${engineStats.modelId})` : 'simulated';
+  term.writeln(`  ${c('•', 'dim')} inference mode: ${c(mode, 'cyan')}`);
+
+  const rig: any = ctx.supervisor.getChild('rig_alpha');
+  const beadsTable = ets.get<import('../actors/types').Bead>('beads');
+  const polecatsTable = ets.get('polecats');
+  if (!rig || !beadsTable) { check('rig_alpha + beads ets', false); return summarize(term, results); }
+
+  // Seed bead
+  const before = new Set(beadsTable.tab2list().map(([k]) => k));
+  rig.cast('create_bead', { type: 'create_bead', title: '[e2e] agent probe', description: 'verify token stream → merge' });
+  await new Promise(r => setTimeout(r, 50));
+  const probeId = beadsTable.tab2list().find(([k]) => !before.has(k))?.[0];
+  check('bead seeded', !!probeId, probeId);
+  if (!probeId) return summarize(term, results);
+
+  // Assign to idle polecat
+  let assignedPid: string | undefined;
+  for (const child of ctx.supervisor.whichChildren().filter(c => c.name.startsWith('polecat_'))) {
+    const state: any = polecatsTable?.lookup(child.pid);
+    if (state?.status === 'idle') {
+      const actor: any = ctx.supervisor.getChild(child.name);
+      actor?.cast('assign_bead', { type: 'assign_bead', beadId: probeId });
+      assignedPid = child.pid;
+      break;
+    }
+  }
+  check('assigned to polecat', !!assignedPid, assignedPid);
+  if (!assignedPid) { rig.cast('remove_bead', { type: 'remove_bead', beadId: probeId }); return summarize(term, results); }
+
+  // Wait for tokens to start streaming
+  const TIMEOUT_MS = 15000;
+  const start = performance.now();
+  let sawTokens = false;
+  let lastStatus = '';
+  let finalBead: any;
+  while (performance.now() - start < TIMEOUT_MS) {
+    const b = beadsTable.lookup(probeId);
+    if (b) {
+      finalBead = b;
+      lastStatus = b.status;
+      if (b.tokensGenerated > 0) sawTokens = true;
+      if (b.status === 'merged' || b.status === 'refinery') break;
+    }
+    await new Promise(r => setTimeout(r, 150));
+  }
+
+  check('tokens streamed', sawTokens, finalBead ? `${finalBead.tokensGenerated} tok @ ${finalBead.tokensPerSec?.toFixed?.(1) || '0'} t/s` : 'none');
+  check('reached terminal state', lastStatus === 'merged' || lastStatus === 'refinery', lastStatus || 'stuck');
+  check('output non-empty', !!finalBead?.tokenStream, `${finalBead?.tokenStream?.length ?? 0} chars`);
+
+  // Cleanup
+  rig.cast('remove_bead', { type: 'remove_bead', beadId: probeId });
+
+  summarize(term, results);
 }
 
 // ── Self-test ─────────────────────────────────────────────────

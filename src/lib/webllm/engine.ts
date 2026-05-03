@@ -200,6 +200,8 @@ export const AVAILABLE_MODELS = [
   { id: 'Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC', name: 'Qwen2.5 Coder 7B', vram: '~5.1GB', description: 'Code-tuned Qwen2.5' },
   // Phi 3.5
   { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi-3.5 mini', vram: '~3.4GB', description: 'Microsoft Phi-3.5 mini' },
+  // Gemma 3 (newest Gemma in WebLLM 0.2.83 — Gemma 4 announced Apr 2026 but not yet shipped to web-llm)
+  { id: 'gemma3-1b-it-q4f16_1-MLC', name: 'Gemma 3 1B', vram: '~700MB', description: '🆕 Google Gemma 3 — tiny + fast' },
   // Gemma 2
   { id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 2B', vram: '~1.9GB', description: 'Google Gemma 2 — small + fast' },
   { id: 'gemma-2-9b-it-q4f16_1-MLC', name: 'Gemma 2 9B', vram: '~6.4GB', description: 'Google Gemma 2 — best quality' },
