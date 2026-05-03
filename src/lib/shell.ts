@@ -139,6 +139,15 @@ function buildCommands(): CommandDef[] {
         });
       },
     },
+    {
+      name: 'engine.ping',
+      description: 'Generate 8 tokens via real WebLLM engine to confirm WebGPU path',
+      execute(term) {
+        runEnginePing(term).catch(e => {
+          term.writeln(c(`engine.ping crashed: ${e?.message || e}`, 'red'));
+        });
+      },
+    },
   ];
 }
 
