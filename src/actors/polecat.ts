@@ -55,6 +55,15 @@ export class PolecatActor extends Actor<PolecatState, PolecatMsg> {
       })
     );
 
+    // Release ownership when refinery sends a bead back
+    this.unsubscribers.push(
+      pubsub.subscribe('bead:released', (data: { beadId: string; polecatPid: string }) => {
+        if (data.polecatPid === this.pid && this.state.currentBeadId === data.beadId) {
+          this.cast('abort_bead', { type: 'abort_bead' } as any);
+        }
+      })
+    );
+
     pubsub.broadcast('polecat:status', { pid: this.pid, name: this.name, status: 'idle' });
 
     return state;
