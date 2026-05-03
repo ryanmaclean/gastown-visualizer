@@ -183,6 +183,22 @@ async function runSelfTest(term: Terminal, ctx: ShellContext): Promise<void> {
 
   if (!probeId) return summarize(term, results);
 
+  // 4b. Assign to an idle polecat (mirrors GasTownContext.assignBeadToPolecat)
+  let assigned = false;
+  const polecatChildren = ctx.supervisor.whichChildren().filter(c => c.name.startsWith('polecat_'));
+  for (const child of polecatChildren) {
+    const actor: any = ctx.supervisor.getChild(child.name);
+    if (!actor) continue;
+    const state: any = polecatsTable?.lookup(child.pid);
+    if (state?.status === 'idle') {
+      actor.cast('assign_bead', { type: 'assign_bead', beadId: probeId });
+      assigned = true;
+      break;
+    }
+  }
+  check('assigned to idle polecat', assigned, assigned ? undefined : `${polecatChildren.length} polecat(s), none idle`);
+  if (!assigned) return summarize(term, results);
+
   // 5. Wait for it to reach a terminal state (merged or backlog cycle).
   const TIMEOUT_MS = 12000;
   const start = performance.now();
