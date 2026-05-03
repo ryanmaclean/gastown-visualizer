@@ -5,7 +5,7 @@ import { Supervisor } from '../lib/otp/supervisor';
 import { ets } from '../lib/otp/ets';
 import { pubsub } from '../lib/otp/pubsub';
 import { MayorActor } from '../actors/mayor';
-import { PolecatActor } from '../actors/polecat';
+import { PolecatActor, resetPolecatIndex } from '../actors/polecat';
 import { RigActor } from '../actors/rig';
 import { RefineryActor } from '../actors/refinery';
 import { webllmEngine, AVAILABLE_MODELS, type ModelId } from '../lib/webllm/engine';
