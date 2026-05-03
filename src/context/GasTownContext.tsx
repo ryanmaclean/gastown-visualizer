@@ -41,6 +41,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       ets.new('stats');
 
       const supervisor = new Supervisor('gastown');
+      resetPolecatIndex();
       await supervisor.start();
 
       // Start Mayor
