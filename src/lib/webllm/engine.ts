@@ -182,27 +182,36 @@ class WebLLMEngine {
 
 export const webllmEngine = new WebLLMEngine();
 
-// Custom model configs for models not in WebLLM's built-in list
-const GEMMA4_REPO = 'https://huggingface.co/welcoma/gemma-4-E2B-it-q4f16_1-MLC';
+// Custom model configs for models not in WebLLM's built-in list (kept for future use)
+const CUSTOM_MODEL_CONFIGS: Record<string, any> = {};
 
-const CUSTOM_MODEL_CONFIGS: Record<string, any> = {
-  'gemma-4-E2B-it-q4f16_1-MLC': {
-    model: GEMMA4_REPO,
-    model_id: 'gemma-4-E2B-it-q4f16_1-MLC',
-    model_lib: `${GEMMA4_REPO}/resolve/main/libs/gemma-4-E2B-it-q4f16_1-MLC-webgpu.wasm`,
-    required_features: ['shader-f16'] as string[],
-  },
-};
-
-// Available models — Qwen3.5 not yet in WebLLM (issue #778), Qwen3 up to 8B available
+// Available models — curated from WebLLM 0.2.82 prebuiltAppConfig (May 2026)
 export const AVAILABLE_MODELS = [
-  { id: 'gemma-4-E2B-it-q4f16_1-MLC', name: 'Gemma 4 E2B', vram: '~2.7GB', description: '⚡ Experimental — custom fork, text-only' },
-  { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~400MB', description: 'Fast, lightweight — good for multi-worker' },
-  { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~1GB', description: 'Balanced speed/quality' },
-  { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~2.5GB', description: 'Good quality, moderate speed' },
-  { id: 'Qwen3-8B-q4f16_1-MLC', name: 'Qwen3 8B', vram: '~5GB', description: 'Best quality — recommended for M1 Max 64GB' },
+  // Qwen 3.5 — newest generation (May 2026)
+  { id: 'Qwen3.5-0.8B-q4f16_1-MLC', name: 'Qwen3.5 0.8B', vram: '~1.6GB', description: '🆕 Qwen3.5 — fastest, lightweight' },
+  { id: 'Qwen3.5-2B-q4f16_1-MLC', name: 'Qwen3.5 2B', vram: '~2.2GB', description: '🆕 Qwen3.5 — balanced' },
+  { id: 'Qwen3.5-4B-q4f16_1-MLC', name: 'Qwen3.5 4B', vram: '~3.9GB', description: '🆕 Qwen3.5 — good quality' },
+  { id: 'Qwen3.5-9B-q4f16_1-MLC', name: 'Qwen3.5 9B', vram: '~6.4GB', description: '🆕 Qwen3.5 — best quality' },
+  // Qwen 3 (still solid)
+  { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~1.4GB', description: 'Fast, lightweight — good for multi-worker' },
+  { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~2GB', description: 'Balanced speed/quality' },
+  { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~3.4GB', description: 'Good quality, moderate speed' },
+  { id: 'Qwen3-8B-q4f16_1-MLC', name: 'Qwen3 8B', vram: '~5.7GB', description: 'High quality — recommended for M1 Max' },
+  // Phi-4-mini
+  { id: 'Phi-4-mini-instruct-q4f16_1-MLC', name: 'Phi-4 mini', vram: '~3.4GB', description: 'Microsoft Phi-4 mini, strong reasoning' },
+  // Gemma 3
+  { id: 'gemma3-1b-it-q4f16_1-MLC', name: 'Gemma 3 1B', vram: '~700MB', description: 'Google Gemma 3 — tiny + fast' },
+  // OLMo 2
+  { id: 'OLMo-2-0425-1B-Instruct-q4f16_1-MLC', name: 'OLMo 2 1B', vram: '~1.8GB', description: 'AllenAI OLMo 2 — fully open' },
+  { id: 'OLMo-2-1124-7B-Instruct-q4f16_1-MLC', name: 'OLMo 2 7B', vram: '~6.5GB', description: 'AllenAI OLMo 2 — fully open, larger' },
+  // Llama 3.2
+  { id: 'Llama-3.2-1B-Instruct-q4f16_1-MLC', name: 'Llama 3.2 1B', vram: '~880MB', description: 'Meta Llama 3.2 — tiny' },
+  { id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC', name: 'Llama 3.2 3B', vram: '~2.3GB', description: 'Meta Llama 3.2 — balanced' },
+  // DeepSeek R1 distills (reasoning)
+  { id: 'DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC', name: 'DeepSeek R1 7B', vram: '~5.1GB', description: 'Reasoning distill — chain-of-thought' },
+  { id: 'DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC', name: 'DeepSeek R1 Llama 8B', vram: '~5GB', description: 'Reasoning distill on Llama' },
 ] as const;
 
-export const DEFAULT_MODEL_ID: ModelId = 'Qwen3-8B-q4f16_1-MLC';
+export const DEFAULT_MODEL_ID: ModelId = 'Qwen3.5-2B-q4f16_1-MLC';
 
 export type ModelId = typeof AVAILABLE_MODELS[number]['id'];
