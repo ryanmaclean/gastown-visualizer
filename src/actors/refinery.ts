@@ -70,7 +70,8 @@ export class RefineryActor extends Actor<RefineryState, RefineryMsg> {
       pubsub.broadcast('refinery:merge', { beadId, passed: true });
       pubsub.broadcast('bead:updated', { beadId, status: 'merged' });
     } else {
-      // Send back for rework
+      // Send back for rework — also release any polecat that may still hold this bead
+      const previousAssignee = bead.assignedTo;
       beadsTable.insert(beadId, {
         ...bead,
         status: 'backlog',
@@ -79,6 +80,9 @@ export class RefineryActor extends Actor<RefineryState, RefineryMsg> {
         tokensGenerated: 0,
         updatedAt: Date.now(),
       });
+      if (previousAssignee) {
+        pubsub.broadcast('bead:released', { beadId, polecatPid: previousAssignee });
+      }
       pubsub.broadcast('refinery:merge', { beadId, passed: false });
       pubsub.broadcast('bead:updated', { beadId, status: 'backlog' });
       pubsub.broadcast('mayor:directive', { text: `Bead ${beadId} failed review — sent back to backlog`, timestamp: Date.now() });

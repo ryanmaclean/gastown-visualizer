@@ -104,19 +104,19 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
   }, [activeRigId]);
 
   const assignBeadToPolecat = useCallback((beadId: string) => {
-    // Find idle polecat
-    const polecatsTable = ets.get('polecats');
-    if (!polecatsTable) return;
+    const sup = supervisorRef.current;
+    if (!sup) return;
 
-    const polecats = polecatsTable.tab2list();
-    const idle = polecats.find(([, p]: [string, any]) => p.status === 'idle');
-    if (idle) {
-      const polecat = supervisorRef.current?.whichChildren().find(c => c.pid === idle[0]);
-      if (polecat) {
-        const actor = supervisorRef.current?.getChild(polecat.name);
-        if (actor) {
-          actor.cast('assign_bead', { type: 'assign_bead', beadId } as any);
-        }
+    // Find an idle polecat by walking supervisor children directly (pid != name).
+    const children = sup.whichChildren().filter(c => c.name.startsWith('polecat_'));
+    for (const child of children) {
+      const actor = sup.getChild(child.name);
+      if (!actor) continue;
+      const polecatsTable = ets.get('polecats');
+      const state: any = polecatsTable?.lookup(child.pid);
+      if (state?.status === 'idle') {
+        actor.cast('assign_bead', { type: 'assign_bead', beadId } as any);
+        return;
       }
     }
   }, []);

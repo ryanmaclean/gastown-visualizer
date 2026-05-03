@@ -10,7 +10,9 @@ import { Bead, PolecatState } from './types';
 const POLECAT_NAMES = ['Rusty', 'Patches', 'Bandit', 'Whiskers', 'Shadow', 'Dusty', 'Copper', 'Grit'];
 const POLECAT_AVATARS = ['🦝', '🦊', '🐺', '🦡', '🐻', '🦫', '🦨', '🐾'];
 
+// Module-level counter — reset on HMR / fresh boot via resetPolecatIndex().
 let polecatIndex = 0;
+export function resetPolecatIndex() { polecatIndex = 0; }
 
 type PolecatMsg =
   | { type: 'assign_bead'; beadId: string }
