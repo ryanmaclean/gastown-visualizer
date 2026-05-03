@@ -28,7 +28,14 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
   const rigActorsRef = useRef<Map<string, RigActor>>(new Map());
   const [supervisor, setSupervisor] = useState<Supervisor | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [activeRigId, setActiveRigId] = useState('rig_alpha');
+  const [activeRigId, setActiveRigIdState] = useState<string>(() => {
+    try { return localStorage.getItem('gastown:activeRigId') || 'rig_alpha'; }
+    catch { return 'rig_alpha'; }
+  });
+  const setActiveRigId = useCallback((id: string) => {
+    setActiveRigIdState(id);
+    try { localStorage.setItem('gastown:activeRigId', id); } catch {}
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
