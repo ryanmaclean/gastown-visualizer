@@ -185,33 +185,36 @@ export const webllmEngine = new WebLLMEngine();
 // Custom model configs for models not in WebLLM's built-in list (kept for future use)
 const CUSTOM_MODEL_CONFIGS: Record<string, any> = {};
 
-// Available models — curated from WebLLM 0.2.82 prebuiltAppConfig (May 2026)
+// Available models — verified against WebLLM 0.2.82 prebuiltAppConfig.
+// IDs are validated by src/test/model-registry.test.ts.
 export const AVAILABLE_MODELS = [
-  // Qwen 3.5 — newest generation (May 2026)
-  { id: 'Qwen3.5-0.8B-q4f16_1-MLC', name: 'Qwen3.5 0.8B', vram: '~1.6GB', description: '🆕 Qwen3.5 — fastest, lightweight' },
-  { id: 'Qwen3.5-2B-q4f16_1-MLC', name: 'Qwen3.5 2B', vram: '~2.2GB', description: '🆕 Qwen3.5 — balanced' },
-  { id: 'Qwen3.5-4B-q4f16_1-MLC', name: 'Qwen3.5 4B', vram: '~3.9GB', description: '🆕 Qwen3.5 — good quality' },
-  { id: 'Qwen3.5-9B-q4f16_1-MLC', name: 'Qwen3.5 9B', vram: '~6.4GB', description: '🆕 Qwen3.5 — best quality' },
-  // Qwen 3 (still solid)
+  // Qwen3 — newest available family in 0.2.82
   { id: 'Qwen3-0.6B-q4f16_1-MLC', name: 'Qwen3 0.6B', vram: '~1.4GB', description: 'Fast, lightweight — good for multi-worker' },
   { id: 'Qwen3-1.7B-q4f16_1-MLC', name: 'Qwen3 1.7B', vram: '~2GB', description: 'Balanced speed/quality' },
   { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3 4B', vram: '~3.4GB', description: 'Good quality, moderate speed' },
   { id: 'Qwen3-8B-q4f16_1-MLC', name: 'Qwen3 8B', vram: '~5.7GB', description: 'High quality — recommended for M1 Max' },
-  // Phi-4-mini
-  { id: 'Phi-4-mini-instruct-q4f16_1-MLC', name: 'Phi-4 mini', vram: '~3.4GB', description: 'Microsoft Phi-4 mini, strong reasoning' },
-  // Gemma 3
-  { id: 'gemma3-1b-it-q4f16_1-MLC', name: 'Gemma 3 1B', vram: '~700MB', description: 'Google Gemma 3 — tiny + fast' },
-  // OLMo 2
-  { id: 'OLMo-2-0425-1B-Instruct-q4f16_1-MLC', name: 'OLMo 2 1B', vram: '~1.8GB', description: 'AllenAI OLMo 2 — fully open' },
-  { id: 'OLMo-2-1124-7B-Instruct-q4f16_1-MLC', name: 'OLMo 2 7B', vram: '~6.5GB', description: 'AllenAI OLMo 2 — fully open, larger' },
-  // Llama 3.2
+  // Qwen2.5
+  { id: 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC', name: 'Qwen2.5 1.5B', vram: '~1.6GB', description: 'Qwen2.5 instruct — tiny' },
+  { id: 'Qwen2.5-3B-Instruct-q4f16_1-MLC', name: 'Qwen2.5 3B', vram: '~2.5GB', description: 'Qwen2.5 instruct — balanced' },
+  { id: 'Qwen2.5-7B-Instruct-q4f16_1-MLC', name: 'Qwen2.5 7B', vram: '~5.1GB', description: 'Qwen2.5 instruct — high quality' },
+  { id: 'Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC', name: 'Qwen2.5 Coder 7B', vram: '~5.1GB', description: 'Code-tuned Qwen2.5' },
+  // Phi 3.5
+  { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi-3.5 mini', vram: '~3.4GB', description: 'Microsoft Phi-3.5 mini' },
+  // Gemma 2
+  { id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 2B', vram: '~1.9GB', description: 'Google Gemma 2 — small + fast' },
+  { id: 'gemma-2-9b-it-q4f16_1-MLC', name: 'Gemma 2 9B', vram: '~6.4GB', description: 'Google Gemma 2 — best quality' },
+  // Llama 3.2 / 3.1
   { id: 'Llama-3.2-1B-Instruct-q4f16_1-MLC', name: 'Llama 3.2 1B', vram: '~880MB', description: 'Meta Llama 3.2 — tiny' },
   { id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC', name: 'Llama 3.2 3B', vram: '~2.3GB', description: 'Meta Llama 3.2 — balanced' },
+  { id: 'Llama-3.1-8B-Instruct-q4f16_1-MLC', name: 'Llama 3.1 8B', vram: '~5.7GB', description: 'Meta Llama 3.1 — high quality' },
+  // SmolLM2 — extra-small
+  { id: 'SmolLM2-1.7B-Instruct-q4f16_1-MLC', name: 'SmolLM2 1.7B', vram: '~1.8GB', description: 'HF SmolLM2 — fully open' },
+  { id: 'SmolLM2-360M-Instruct-q4f16_1-MLC', name: 'SmolLM2 360M', vram: '~380MB', description: 'HF SmolLM2 — ultra tiny' },
   // DeepSeek R1 distills (reasoning)
   { id: 'DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC', name: 'DeepSeek R1 7B', vram: '~5.1GB', description: 'Reasoning distill — chain-of-thought' },
   { id: 'DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC', name: 'DeepSeek R1 Llama 8B', vram: '~5GB', description: 'Reasoning distill on Llama' },
 ] as const;
 
-export const DEFAULT_MODEL_ID: ModelId = 'Qwen3.5-2B-q4f16_1-MLC';
-
 export type ModelId = typeof AVAILABLE_MODELS[number]['id'];
+
+export const DEFAULT_MODEL_ID: ModelId = 'Qwen3-1.7B-q4f16_1-MLC';
