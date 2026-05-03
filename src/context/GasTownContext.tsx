@@ -126,6 +126,23 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supervisor]);
 
+  const abortBead = useCallback((beadId: string) => {
+    const sup = supervisor;
+    if (!sup) return;
+    const beadsTable = ets.get<Bead>('beads');
+    const bead = beadsTable?.lookup(beadId);
+    if (!bead?.assignedTo) return;
+    const children = sup.whichChildren().filter(c => c.name.startsWith('polecat_'));
+    const child = children.find(c => c.pid === bead.assignedTo);
+    if (!child) return;
+    const actor = sup.getChild(child.name);
+    actor?.cast('abort_bead', { type: 'abort_bead' } as any);
+    if (beadsTable) {
+      beadsTable.insert(beadId, { ...bead, status: 'backlog', assignedTo: null, updatedAt: Date.now() });
+      pubsub.broadcast('bead:updated', { beadId, status: 'backlog' });
+    }
+  }, [supervisor]);
+
   const autoAssignBacklog = useCallback(() => {
     const beadsTable = ets.get<Bead>('beads');
     if (!beadsTable) return;
@@ -148,6 +165,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       setActiveRigId,
       createBead,
       assignBeadToPolecat,
+      abortBead,
       loadModel,
       autoAssignBacklog,
     }}>
