@@ -24,22 +24,43 @@ export function useScale() {
     return Number.isFinite(n) ? n : 2;
   });
 
+  const scaleRef = useRef(scale);
+  scaleRef.current = scale;
+
   useEffect(() => {
     document.documentElement.style.setProperty('--ui-scale', String(scale));
     localStorage.setItem(STORAGE_KEY, String(scale));
   }, [scale]);
 
-  const cycleUp = () => {
-    const idx = SCALES.findIndex(s => s.value === scale);
+  const cycleUp = useCallback(() => {
+    const idx = SCALES.findIndex(s => s.value === scaleRef.current);
     const next = SCALES[Math.min(idx + 1, SCALES.length - 1)];
     if (next) setScale(next.value);
-  };
+  }, []);
 
-  const cycleDown = () => {
-    const idx = SCALES.findIndex(s => s.value === scale);
+  const cycleDown = useCallback(() => {
+    const idx = SCALES.findIndex(s => s.value === scaleRef.current);
     const prev = SCALES[Math.max(idx - 1, 0)];
     if (prev) setScale(prev.value);
-  };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        cycleUp();
+      } else if (e.key === '-') {
+        e.preventDefault();
+        cycleDown();
+      } else if (e.key === '0') {
+        e.preventDefault();
+        setScale(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cycleUp, cycleDown]);
 
   return { scale, setScale, cycleUp, cycleDown };
 }
