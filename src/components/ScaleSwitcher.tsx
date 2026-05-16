@@ -46,7 +46,7 @@ export function useScale() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!(e.ctrlKey || e.metaKey)) return;
+      if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
       if (e.key === '=' || e.key === '+') {
         e.preventDefault();
         cycleUp();
@@ -69,7 +69,7 @@ export function ScaleSwitcher() {
   const { scale, setScale } = useScale();
 
   return (
-    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale (Ctrl/Cmd +/-)">
+    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale (Alt +/-/0)">
       {SCALES.map(s => (
         <button
           key={s.value}
