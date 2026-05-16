@@ -1,7 +1,7 @@
 // UI scale switcher — persists to localStorage, applies via --ui-scale on <html>
 import React, { useEffect, useState } from 'react';
 
-const SCALES = [
+export const SCALES = [
   { value: 1, label: '1×' },
   { value: 1.25, label: '1.25×' },
   { value: 1.5, label: '1.5×' },
@@ -17,7 +17,7 @@ export function applyStoredScale() {
   document.documentElement.style.setProperty('--ui-scale', String(Number.isFinite(n) ? n : 2));
 }
 
-export function ScaleSwitcher() {
+export function useScale() {
   const [scale, setScale] = useState<number>(() => {
     const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
     const n = raw ? parseFloat(raw) : 2;
@@ -29,8 +29,26 @@ export function ScaleSwitcher() {
     localStorage.setItem(STORAGE_KEY, String(scale));
   }, [scale]);
 
+  const cycleUp = () => {
+    const idx = SCALES.findIndex(s => s.value === scale);
+    const next = SCALES[Math.min(idx + 1, SCALES.length - 1)];
+    if (next) setScale(next.value);
+  };
+
+  const cycleDown = () => {
+    const idx = SCALES.findIndex(s => s.value === scale);
+    const prev = SCALES[Math.max(idx - 1, 0)];
+    if (prev) setScale(prev.value);
+  };
+
+  return { scale, setScale, cycleUp, cycleDown };
+}
+
+export function ScaleSwitcher() {
+  const { scale, setScale } = useScale();
+
   return (
-    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale">
+    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale (Ctrl/Cmd +/-)">
       {SCALES.map(s => (
         <button
           key={s.value}
