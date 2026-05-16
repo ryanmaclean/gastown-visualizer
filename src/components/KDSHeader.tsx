@@ -49,6 +49,7 @@ export function KDSHeader() {
           ))}
         </div>
 
+        <ScaleSwitcher />
         <ThemeSwitcher />
         <CreateBeadForm />
 
