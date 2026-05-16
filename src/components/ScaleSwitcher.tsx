@@ -1,5 +1,5 @@
 // UI scale switcher — persists to localStorage, applies via --ui-scale on <html>
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export const SCALES = [
   { value: 1, label: '1×' },
