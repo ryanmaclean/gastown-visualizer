@@ -1,7 +1,7 @@
 // UI scale switcher — persists to localStorage, applies via --ui-scale on <html>
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-const SCALES = [
+export const SCALES = [
   { value: 1, label: '1×' },
   { value: 1.25, label: '1.25×' },
   { value: 1.5, label: '1.5×' },
@@ -17,20 +17,59 @@ export function applyStoredScale() {
   document.documentElement.style.setProperty('--ui-scale', String(Number.isFinite(n) ? n : 2));
 }
 
-export function ScaleSwitcher() {
+export function useScale() {
   const [scale, setScale] = useState<number>(() => {
     const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
     const n = raw ? parseFloat(raw) : 2;
     return Number.isFinite(n) ? n : 2;
   });
 
+  const scaleRef = useRef(scale);
+  scaleRef.current = scale;
+
   useEffect(() => {
     document.documentElement.style.setProperty('--ui-scale', String(scale));
     localStorage.setItem(STORAGE_KEY, String(scale));
   }, [scale]);
 
+  const cycleUp = useCallback(() => {
+    const idx = SCALES.findIndex(s => s.value === scaleRef.current);
+    const next = SCALES[Math.min(idx + 1, SCALES.length - 1)];
+    if (next) setScale(next.value);
+  }, []);
+
+  const cycleDown = useCallback(() => {
+    const idx = SCALES.findIndex(s => s.value === scaleRef.current);
+    const prev = SCALES[Math.max(idx - 1, 0)];
+    if (prev) setScale(prev.value);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        cycleUp();
+      } else if (e.key === '-') {
+        e.preventDefault();
+        cycleDown();
+      } else if (e.key === '0') {
+        e.preventDefault();
+        setScale(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cycleUp, cycleDown]);
+
+  return { scale, setScale, cycleUp, cycleDown };
+}
+
+export function ScaleSwitcher() {
+  const { scale, setScale } = useScale();
+
   return (
-    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale">
+    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale (Ctrl/Cmd +/-)">
       {SCALES.map(s => (
         <button
           key={s.value}
