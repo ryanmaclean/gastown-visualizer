@@ -5,6 +5,7 @@ import { useGasTown } from '../context/GasTownContext';
 import { RigSelector } from './RigSelector';
 import { CreateBeadForm } from './CreateBeadForm';
 import { ThemeSwitcher } from './ThemeSwitcher';
+import { ScaleSwitcher } from './ScaleSwitcher';
 import { useEtsTable } from '../hooks/useEts';
 import { PolecatState } from '../actors/types';
 import { AgentIcon } from './CoplandIcons';
