@@ -1,5 +1,6 @@
 // UI scale switcher — persists to localStorage, applies via --ui-scale on <html>
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 export const SCALES = [
   { value: 1, label: '1×' },
