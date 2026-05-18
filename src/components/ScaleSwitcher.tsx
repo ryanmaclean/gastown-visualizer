@@ -70,20 +70,33 @@ export function ScaleSwitcher() {
   const { scale, setScale } = useScale();
 
   return (
-    <div className="copland-inset bg-card flex items-center gap-px p-0.5" title="UI scale (Alt +/-/0)">
-      {SCALES.map(s => (
-        <button
-          key={s.value}
-          onClick={() => setScale(s.value)}
-          className={`px-1.5 py-0.5 text-[10px] font-mono transition-colors ${
-            scale === s.value
-              ? 'bg-primary text-primary-foreground'
-              : 'text-foreground hover:bg-secondary'
-          }`}
-        >
-          {s.label}
-        </button>
-      ))}
-    </div>
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="copland-inset bg-card flex items-center gap-px p-0.5 cursor-default">
+            {SCALES.map(s => (
+              <button
+                key={s.value}
+                onClick={() => setScale(s.value)}
+                className={`px-1.5 py-0.5 text-[10px] font-mono transition-colors ${
+                  scale === s.value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground hover:bg-secondary'
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="font-mono text-xs">
+          <div className="flex flex-col gap-0.5">
+            <span><kbd className="px-1 py-0.5 bg-muted rounded border">Alt +</kbd> increase scale</span>
+            <span><kbd className="px-1 py-0.5 bg-muted rounded border">Alt -</kbd> decrease scale</span>
+            <span><kbd className="px-1 py-0.5 bg-muted rounded border">Alt 0</kbd> reset to 1×</span>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
