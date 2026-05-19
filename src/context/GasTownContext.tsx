@@ -75,6 +75,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       }
 
       await sup.startChild({ name: 'refinery', factory: () => new RefineryActor() });
+      await sup.startChild({ name: 'lineage', factory: () => new LineageActor() });
 
       if (cancelled) { await sup.stop(); return; }
       setSupervisor(sup);
