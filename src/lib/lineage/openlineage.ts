@@ -1,6 +1,8 @@
 // OpenLineage event builders — spec-shaped RunEvents with Gas Town facets
 // https://openlineage.io/spec/
 
+import { supabase } from '../../integrations/supabase/client';
+
 export type RunEventType = 'START' | 'RUNNING' | 'COMPLETE' | 'FAIL' | 'ABORT' | 'OTHER';
 
 const PRODUCER = 'https://github.com/gastown/visualizer/v1';
@@ -42,7 +44,6 @@ export interface RunEvent {
 
 let _runSeq = 0;
 export function newRunId(): string {
-  // crypto.randomUUID if available, otherwise pseudo-uuid
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return (crypto as any).randomUUID();
   }
@@ -87,17 +88,47 @@ export function mergeFacets(
   return { ...(prev || {}), ...(next || {}) };
 }
 
-// Optional HTTP emitter — disabled unless localStorage `gastown:lineage:url` is set.
-export async function maybeEmit(event: RunEvent): Promise<void> {
+// ── Datadog forwarding (batched) ────────────────────────────
+// Enable by setting localStorage.gastown:lineage:datadog = "1".
+// Events buffer for ~750ms then POST to the `lineage-forward` edge function.
+
+const FLUSH_MS = 750;
+const MAX_BATCH = 50;
+let _buffer: RunEvent[] = [];
+let _timer: ReturnType<typeof setTimeout> | null = null;
+
+function datadogEnabled(): boolean {
   try {
-    const url = typeof localStorage !== 'undefined' ? localStorage.getItem('gastown:lineage:url') : null;
-    if (!url) return;
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event),
-    });
+    return typeof localStorage !== 'undefined'
+      && localStorage.getItem('gastown:lineage:datadog') === '1';
   } catch {
-    // swallow — lineage emission is best-effort
+    return false;
+  }
+}
+
+async function flush(): Promise<void> {
+  if (_buffer.length === 0) return;
+  const events = _buffer.splice(0, _buffer.length);
+  try {
+    await supabase.functions.invoke('lineage-forward', { body: { events } });
+  } catch (e) {
+    // Best-effort — never block UI on lineage failures.
+    console.warn('[lineage] datadog forward failed', e);
+  }
+}
+
+export function maybeEmit(event: RunEvent): void {
+  if (!datadogEnabled()) return;
+  _buffer.push(event);
+  if (_buffer.length >= MAX_BATCH) {
+    if (_timer) { clearTimeout(_timer); _timer = null; }
+    void flush();
+    return;
+  }
+  if (!_timer) {
+    _timer = setTimeout(() => {
+      _timer = null;
+      void flush();
+    }, FLUSH_MS);
   }
 }
