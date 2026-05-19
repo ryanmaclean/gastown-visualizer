@@ -31,7 +31,18 @@ Deno.serve(async (req) => {
     });
   }
 
-  const site = Deno.env.get('DATADOG_SITE') || 'datadoghq.com';
+  const rawSite = (Deno.env.get('DATADOG_SITE') || 'datadoghq.com').trim().toLowerCase();
+  const siteAliases: Record<string, string> = {
+    us1: 'datadoghq.com',
+    us: 'datadoghq.com',
+    us3: 'us3.datadoghq.com',
+    us5: 'us5.datadoghq.com',
+    eu: 'datadoghq.eu',
+    eu1: 'datadoghq.eu',
+    ap1: 'ap1.datadoghq.com',
+    gov: 'ddog-gov.com',
+  };
+  const site = siteAliases[rawSite] || rawSite;
   // Datadog OpenLineage intake (Data Jobs Monitoring)
   const url = `https://api.${site}/api/v2/lineage/openlineage`;
 
