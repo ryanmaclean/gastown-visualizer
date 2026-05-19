@@ -158,6 +158,82 @@ function buildCommands(): CommandDef[] {
         });
       },
     },
+    {
+      name: 'lineage.tail',
+      description: 'Show the most recent OpenLineage events',
+      args: ['[count]'],
+      execute(term, args) {
+        const n = Math.max(1, Math.min(200, parseInt(args[0] || '20', 10) || 20));
+        const table = ets.get('lineage_events');
+        if (!table) { term.writeln(c('lineage_events table missing', 'red')); return; }
+        const all = table.tab2list().map(([, v]: any) => v).sort((a: any, b: any) => a.seq - b.seq);
+        const slice = all.slice(-n);
+        term.writeln(c(`Lineage events (last ${slice.length} of ${all.length}):`, 'bold'));
+        slice.forEach((e: any) => {
+          const t = new Date(e.event.eventTime).toISOString().slice(11, 23);
+          const type = e.event.eventType.padEnd(8);
+          term.writeln(`  ${c(t, 'dim')} ${c(type, 'cyan')} ${c(e.beadId, 'yellow')} ${c(e.runId.slice(0, 8), 'dim')}`);
+        });
+      },
+    },
+    {
+      name: 'lineage.show',
+      description: 'Show all lineage events for a bead',
+      args: ['<beadId>'],
+      execute(term, args) {
+        const beadId = args[0];
+        if (!beadId) { term.writeln(c('Usage: lineage.show <beadId>', 'red')); return; }
+        const table = ets.get('lineage_events');
+        if (!table) { term.writeln(c('lineage_events table missing', 'red')); return; }
+        const evts = table.tab2list().map(([, v]: any) => v).filter((e: any) => e.beadId === beadId).sort((a: any, b: any) => a.seq - b.seq);
+        if (evts.length === 0) { term.writeln(c(`no events for ${beadId}`, 'dim')); return; }
+        term.writeln(c(`Lineage for ${beadId} (${evts.length} events):`, 'bold'));
+        evts.forEach((e: any) => {
+          const t = new Date(e.event.eventTime).toISOString().slice(11, 23);
+          term.writeln(`  ${c(t, 'dim')} ${c(e.event.eventType.padEnd(8), 'cyan')} ${c(e.runId.slice(0, 8), 'yellow')}`);
+        });
+      },
+    },
+    {
+      name: 'lineage.export',
+      description: 'Copy lineage JSON for a bead to clipboard',
+      args: ['<beadId>'],
+      execute(term, args) {
+        const beadId = args[0];
+        if (!beadId) { term.writeln(c('Usage: lineage.export <beadId>', 'red')); return; }
+        const table = ets.get('lineage_events');
+        if (!table) { term.writeln(c('lineage_events table missing', 'red')); return; }
+        const evts = table.tab2list().map(([, v]: any) => v).filter((e: any) => e.beadId === beadId).sort((a: any, b: any) => a.seq - b.seq).map((e: any) => e.event);
+        const json = JSON.stringify(evts, null, 2);
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+          navigator.clipboard.writeText(json).then(
+            () => term.writeln(c(`✔ copied ${evts.length} events (${json.length} bytes)`, 'green')),
+            (err) => term.writeln(c(`✖ clipboard error: ${err?.message || err}`, 'red')),
+          );
+        } else {
+          term.writeln(json);
+        }
+      },
+    },
+    {
+      name: 'lineage.stats',
+      description: 'Counts of lineage events by type',
+      execute(term) {
+        const table = ets.get('lineage_events');
+        if (!table) { term.writeln(c('lineage_events table missing', 'red')); return; }
+        const counts: Record<string, number> = {};
+        table.tab2list().forEach(([, v]: any) => {
+          counts[v.event.eventType] = (counts[v.event.eventType] || 0) + 1;
+        });
+        const runs = ets.get('lineage_runs');
+        const runCount = runs?.size() ?? 0;
+        term.writeln(c(`Lineage stats:`, 'bold'));
+        term.writeln(`  ${c('total runs', 'cyan')}: ${c(String(runCount), 'yellow')}`);
+        Object.entries(counts).forEach(([k, v]) => {
+          term.writeln(`  ${c(k, 'cyan')}: ${c(String(v), 'yellow')}`);
+        });
+      },
+    },
   ];
 }
 

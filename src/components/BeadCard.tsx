@@ -1,10 +1,12 @@
 // BeadCard — displays a bead with status, assignment, token stream
+// Flip the card to reveal the OpenLineage event log on the back.
 
 import React, { useState } from 'react';
 import { Bead, PolecatState } from '../actors/types';
 import { useEtsLookup } from '../hooks/useEts';
 import { useGasTown } from '../context/GasTownContext';
-import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Zap, AlertTriangle, GitMerge, Clock, X, Activity } from 'lucide-react';
+import { BeadCardBack } from './BeadCardBack';
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   backlog: { label: 'BACKLOG', color: 'text-muted-foreground', icon: <Clock className="w-3 h-3" /> },
@@ -16,93 +18,114 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
 
 export function BeadCard({ bead }: { bead: Bead }) {
   const [expanded, setExpanded] = useState(false);
+  const [flipped, setFlipped] = useState(false);
   const polecat = useEtsLookup<PolecatState>('polecats', bead.assignedTo);
   const { assignBeadToPolecat, abortBead } = useGasTown();
   const config = statusConfig[bead.status] || statusConfig.backlog;
 
   return (
-    <div className="bg-card border border-border rounded-md p-3 space-y-2 hover:border-primary/40 transition-colors">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-mono text-muted-foreground">{bead.id}</span>
-        <span className={`flex items-center gap-1 text-xs font-mono ${config.color}`}>
-          {config.icon}
-          {config.label}
-          {bead.status === 'in_progress' && <span className="animate-pulse-glow">●</span>}
-        </span>
-      </div>
+    <div className="flip-card">
+      <div className={`flip-card-inner ${flipped ? 'is-flipped' : ''}`}>
+        {/* FRONT */}
+        <div className="bg-card border border-border rounded-md p-3 space-y-2 hover:border-primary/40 transition-colors">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-muted-foreground">{bead.id}</span>
+            <div className="flex items-center gap-2">
+              <span className={`flex items-center gap-1 text-xs font-mono ${config.color}`}>
+                {config.icon}
+                {config.label}
+                {bead.status === 'in_progress' && <span className="animate-pulse-glow">●</span>}
+              </span>
+              <button
+                onClick={() => setFlipped(true)}
+                title="Show lineage"
+                aria-label="Show lineage"
+                className="p-0.5 rounded border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              >
+                <Activity className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
 
-      {/* Title */}
-      <p className="text-sm font-medium text-foreground leading-tight">{bead.title}</p>
+          {/* Title */}
+          <p className="text-sm font-medium text-foreground leading-tight">{bead.title}</p>
 
-      {/* Polecat assignment */}
-      {polecat && (
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <span>{polecat.avatar}</span>
-          <span>{polecat.name}</span>
-        </div>
-      )}
+          {/* Polecat assignment */}
+          {polecat && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span>{polecat.avatar}</span>
+              <span>{polecat.name}</span>
+            </div>
+          )}
 
-      {/* Convoy tag */}
-      {bead.convoyId && (
-        <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground font-mono">
-          ⚡ {bead.convoyId}
-        </span>
-      )}
+          {/* Convoy tag */}
+          {bead.convoyId && (
+            <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-secondary text-secondary-foreground font-mono">
+              ⚡ {bead.convoyId}
+            </span>
+          )}
 
-      {/* Escalation badge */}
-      {bead.escalated && (
-        <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-mono">
-          ⚠ ESCALATED
-        </span>
-      )}
+          {/* Escalation badge */}
+          {bead.escalated && (
+            <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-mono">
+              ⚠ ESCALATED
+            </span>
+          )}
 
-      {/* Metrics row */}
-      {bead.tokensGenerated > 0 && (
-        <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono">
-          <span>{bead.tokensGenerated} tok</span>
-          <span>{bead.tokensPerSec.toFixed(1)} t/s</span>
-        </div>
-      )}
+          {/* Metrics row */}
+          {bead.tokensGenerated > 0 && (
+            <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono">
+              <span>{bead.tokensGenerated} tok</span>
+              <span>{bead.tokensPerSec.toFixed(1)} t/s</span>
+            </div>
+          )}
 
-      {/* Expandable token stream */}
-      {bead.tokenStream && (
-        <div>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            output
-          </button>
-          {expanded && (
-            <pre className="mt-1 p-2 bg-background rounded text-xs text-foreground/80 max-h-32 overflow-y-auto whitespace-pre-wrap break-words font-mono">
-              {bead.tokenStream}
-              {bead.status === 'in_progress' && <span className="animate-blink">▌</span>}
-            </pre>
+          {/* Expandable token stream */}
+          {bead.tokenStream && (
+            <div>
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                output
+              </button>
+              {expanded && (
+                <pre className="mt-1 p-2 bg-background rounded text-xs text-foreground/80 max-h-32 overflow-y-auto whitespace-pre-wrap break-words font-mono">
+                  {bead.tokenStream}
+                  {bead.status === 'in_progress' && <span className="animate-blink">▌</span>}
+                </pre>
+              )}
+            </div>
+          )}
+
+          {/* Assign button for backlog */}
+          {bead.status === 'backlog' && (
+            <button
+              onClick={() => assignBeadToPolecat(bead.id)}
+              className="w-full text-xs py-1 rounded border border-border hover:border-primary hover:text-primary transition-colors text-muted-foreground"
+            >
+              ▶ Assign Polecat
+            </button>
+          )}
+
+          {/* Abort button for in-progress */}
+          {bead.status === 'in_progress' && (
+            <button
+              onClick={() => abortBead(bead.id)}
+              className="w-full flex items-center justify-center gap-1 text-xs py-1 rounded border border-border hover:border-destructive hover:text-destructive transition-colors text-muted-foreground"
+            >
+              <X className="w-3 h-3" /> Abort
+            </button>
           )}
         </div>
-      )}
 
-      {/* Assign button for backlog */}
-      {bead.status === 'backlog' && (
-        <button
-          onClick={() => assignBeadToPolecat(bead.id)}
-          className="w-full text-xs py-1 rounded border border-border hover:border-primary hover:text-primary transition-colors text-muted-foreground"
-        >
-          ▶ Assign Polecat
-        </button>
-      )}
-
-      {/* Abort button for in-progress */}
-      {bead.status === 'in_progress' && (
-        <button
-          onClick={() => abortBead(bead.id)}
-          className="w-full flex items-center justify-center gap-1 text-xs py-1 rounded border border-border hover:border-destructive hover:text-destructive transition-colors text-muted-foreground"
-        >
-          <X className="w-3 h-3" /> Abort
-        </button>
-      )}
+        {/* BACK */}
+        <div className="flip-card-back">
+          <BeadCardBack beadId={bead.id} onFlip={() => setFlipped(false)} />
+        </div>
+      </div>
     </div>
   );
 }
