@@ -8,6 +8,7 @@ import { MayorActor } from '../actors/mayor';
 import { PolecatActor, resetPolecatIndex } from '../actors/polecat';
 import { RigActor } from '../actors/rig';
 import { RefineryActor } from '../actors/refinery';
+import { LineageActor } from '../actors/lineage';
 import { webllmEngine, AVAILABLE_MODELS, type ModelId } from '../lib/webllm/engine';
 import type { Bead, RigState } from '../actors/types';
 
@@ -50,6 +51,8 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       ets.new('scheduler');
       ets.new('escalations');
       ets.new('stats');
+      ets.new('lineage_events');
+      ets.new('lineage_runs');
 
       const sup = new Supervisor('gastown');
       localSupervisor = sup;
