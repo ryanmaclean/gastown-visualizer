@@ -40,11 +40,14 @@ Deno.serve(async (req) => {
     eu: 'datadoghq.eu',
     eu1: 'datadoghq.eu',
     ap1: 'ap1.datadoghq.com',
+    ap2: 'ap2.datadoghq.com',
     gov: 'ddog-gov.com',
   };
   const site = siteAliases[rawSite] || rawSite;
-  // Datadog OpenLineage intake (Data Jobs Monitoring)
-  const url = `https://api.${site}/api/v2/lineage/openlineage`;
+  // Datadog Data Observability OpenLineage intake.
+  // Hostname + path mirror the official OpenLineage Python Datadog transport
+  // (data-obs-intake.<site> + OL HttpTransport's POST /api/v1/lineage).
+  const url = `https://data-obs-intake.${site}/api/v1/lineage`;
 
   let body: unknown;
   try {
