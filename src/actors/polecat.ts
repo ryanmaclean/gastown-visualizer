@@ -64,6 +64,15 @@ export class PolecatActor extends Actor<PolecatState, PolecatMsg> {
       })
     );
 
+    // Scheduler stall timer fired — mark self + bead as stalled.
+    this.unsubscribers.push(
+      pubsub.subscribe('bead:stalled', (data: { beadId: string; polecatPid: string }) => {
+        if (data.polecatPid === this.pid && this.state.currentBeadId === data.beadId) {
+          this.cast('inference_error', { type: 'inference_error', error: 'stall_timeout' } as any);
+        }
+      })
+    );
+
     pubsub.broadcast('polecat:status', { pid: this.pid, name: this.name, status: 'idle' });
 
     return state;
