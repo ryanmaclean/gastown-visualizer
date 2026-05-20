@@ -152,6 +152,16 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           ▷ Assign Agent
         </button>
       )}
+
+      {/* Escalate action — surfaces when bead has stalled and not yet escalated */}
+      {bead.status === 'stalled' && !bead.escalated && (
+        <button
+          onClick={() => escalateBead(bead.id)}
+          className="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
+        >
+          ⚠ Escalate to Mayor
+        </button>
+      )}
     </div>
   );
 }
