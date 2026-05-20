@@ -148,6 +148,19 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supervisor]);
 
+  const escalateBead = useCallback((beadId: string) => {
+    const beadsTable = ets.get<Bead>('beads');
+    const bead = beadsTable?.lookup(beadId);
+    if (!bead || !beadsTable) return;
+    // Mark escalated immediately so the UI reflects intent
+    beadsTable.insert(beadId, { ...bead, escalated: true, updatedAt: Date.now() });
+    pubsub.broadcast('escalation', {
+      type: 'stall',
+      beadId,
+      polecatPid: bead.assignedTo || '',
+    });
+  }, []);
+
   const autoAssignBacklog = useCallback(() => {
     const beadsTable = ets.get<Bead>('beads');
     if (!beadsTable) return;
@@ -171,6 +184,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       createBead,
       assignBeadToPolecat,
       abortBead,
+      escalateBead,
       loadModel,
       autoAssignBacklog,
     }}>
