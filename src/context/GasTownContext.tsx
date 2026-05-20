@@ -20,6 +20,7 @@ interface GasTownContextValue {
   createBead: (title: string, description: string) => void;
   assignBeadToPolecat: (beadId: string) => void;
   abortBead: (beadId: string) => void;
+  escalateBead: (beadId: string) => void;
   loadModel: (modelId: ModelId) => Promise<void>;
   autoAssignBacklog: () => void;
 }
@@ -98,8 +99,32 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
 
     boot();
 
+    // Startup demo: every ~5s, push any backlog beads in the active rig to an idle polecat.
+    // The Refinery + Mayor actors already move beads through review/escalation, so this single
+    // tick is enough to keep all 4 Kanban lanes moving without user interaction.
+    const demoInterval = setInterval(() => {
+      const sup = localSupervisor;
+      if (!sup) return;
+      const beadsTable = ets.get<Bead>('beads');
+      if (!beadsTable) return;
+      const backlog = beadsTable.match((b: Bead) => b.status === 'backlog' && !b.assignedTo);
+      if (backlog.length === 0) return;
+      const polecatsTable = ets.get('polecats');
+      const children = sup.whichChildren().filter((c) => c.name.startsWith('polecat_'));
+      for (const [, bead] of backlog) {
+        const idle = children.find((c) => {
+          const st: any = polecatsTable?.lookup(c.pid);
+          return st?.status === 'idle';
+        });
+        if (!idle) break;
+        const actor = sup.getChild(idle.name);
+        actor?.cast('assign_bead', { type: 'assign_bead', beadId: bead.id } as any);
+      }
+    }, 5000);
+
     return () => {
       cancelled = true;
+      clearInterval(demoInterval);
       localSupervisor?.stop();
       ets.clear();
       pubsub.clear();
@@ -147,6 +172,19 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
     }
   }, [supervisor]);
 
+  const escalateBead = useCallback((beadId: string) => {
+    const beadsTable = ets.get<Bead>('beads');
+    const bead = beadsTable?.lookup(beadId);
+    if (!bead || !beadsTable) return;
+    // Mark escalated immediately so the UI reflects intent
+    beadsTable.insert(beadId, { ...bead, escalated: true, updatedAt: Date.now() });
+    pubsub.broadcast('escalation', {
+      type: 'stall',
+      beadId,
+      polecatPid: bead.assignedTo || '',
+    });
+  }, []);
+
   const autoAssignBacklog = useCallback(() => {
     const beadsTable = ets.get<Bead>('beads');
     if (!beadsTable) return;
@@ -170,6 +208,7 @@ export function GasTownProvider({ children }: { children: React.ReactNode }) {
       createBead,
       assignBeadToPolecat,
       abortBead,
+      escalateBead,
       loadModel,
       autoAssignBacklog,
     }}>

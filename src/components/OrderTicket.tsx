@@ -43,7 +43,7 @@ const tagStyles: Record<string, string> = {
 export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
   const [expanded, setExpanded] = useState(false);
   const polecat = useEtsLookup<PolecatState>('polecats', bead.assignedTo);
-  const { assignBeadToPolecat } = useGasTown();
+  const { assignBeadToPolecat, escalateBead } = useGasTown();
   const timer = useElapsedTime(bead.createdAt);
   const tags = getBeadTags(bead);
 
@@ -150,6 +150,16 @@ export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
           className="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
         >
           ▷ Assign Agent
+        </button>
+      )}
+
+      {/* Escalate action — surfaces when bead has stalled and not yet escalated */}
+      {bead.status === 'stalled' && !bead.escalated && (
+        <button
+          onClick={() => escalateBead(bead.id)}
+          className="w-full py-1.5 text-[10px] font-bold uppercase tracking-wider text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors flex items-center justify-center gap-1 border-t border-border copland-title-stripes"
+        >
+          ⚠ Escalate to Mayor
         </button>
       )}
     </div>
