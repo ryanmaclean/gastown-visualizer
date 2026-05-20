@@ -20,6 +20,7 @@ interface GasTownContextValue {
   createBead: (title: string, description: string) => void;
   assignBeadToPolecat: (beadId: string) => void;
   abortBead: (beadId: string) => void;
+  escalateBead: (beadId: string) => void;
   loadModel: (modelId: ModelId) => Promise<void>;
   autoAssignBacklog: () => void;
 }
