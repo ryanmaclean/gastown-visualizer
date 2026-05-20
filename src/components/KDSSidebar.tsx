@@ -10,6 +10,7 @@ import { PolecatPanel } from './PolecatPanel';
 import { MayorPanel } from './MayorPanel';
 import { StatsPanel } from './StatsPanel';
 import { LineageInspector } from './LineageInspector';
+import { InternetMap } from './InternetMap';
 import { PixelFolder, PixelGear, PixelChip, PixelShield, PixelChart, WindowCloseBox, WindowZoomBox, AgentIcon } from './CoplandIcons';
 import { Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGasTown } from '../context/GasTownContext';
@@ -242,6 +243,10 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
 
             <div className="copland-inset bg-card p-2">
               <LineageInspector />
+            </div>
+
+            <div className="copland-inset bg-card p-2">
+              <InternetMap />
             </div>
           </>
         )}
