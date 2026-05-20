@@ -43,7 +43,7 @@ const tagStyles: Record<string, string> = {
 export function OrderTicket({ bead, column }: { bead: Bead; column: string }) {
   const [expanded, setExpanded] = useState(false);
   const polecat = useEtsLookup<PolecatState>('polecats', bead.assignedTo);
-  const { assignBeadToPolecat } = useGasTown();
+  const { assignBeadToPolecat, escalateBead } = useGasTown();
   const timer = useElapsedTime(bead.createdAt);
   const tags = getBeadTags(bead);
 
