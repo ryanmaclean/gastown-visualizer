@@ -89,7 +89,7 @@ export function mergeFacets(
 }
 
 // ── Datadog forwarding (batched) ────────────────────────────
-// Enable by setting localStorage.gastown:lineage:datadog = "1".
+// On by default for the demo. Disable with localStorage.gastown:lineage:datadog = "0".
 // Events buffer for ~750ms then POST to the `lineage-forward` edge function.
 
 const FLUSH_MS = 750;
@@ -99,10 +99,11 @@ let _timer: ReturnType<typeof setTimeout> | null = null;
 
 function datadogEnabled(): boolean {
   try {
-    return typeof localStorage !== 'undefined'
-      && localStorage.getItem('gastown:lineage:datadog') === '1';
+    if (typeof localStorage === 'undefined') return true;
+    // Default ON; only an explicit "0" disables forwarding.
+    return localStorage.getItem('gastown:lineage:datadog') !== '0';
   } catch {
-    return false;
+    return true;
   }
 }
 
