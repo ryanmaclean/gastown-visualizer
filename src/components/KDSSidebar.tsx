@@ -239,6 +239,10 @@ function SidebarContent({ mode, onToggle, showClose }: { mode: SidebarMode; onTo
             <div className="copland-inset bg-card p-2">
               <StatsPanel />
             </div>
+
+            <div className="copland-inset bg-card p-2">
+              <LineageInspector />
+            </div>
           </>
         )}
       </div>
