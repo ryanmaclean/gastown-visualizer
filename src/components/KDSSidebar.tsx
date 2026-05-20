@@ -10,6 +10,7 @@ import { PolecatPanel } from './PolecatPanel';
 import { MayorPanel } from './MayorPanel';
 import { StatsPanel } from './StatsPanel';
 import { LineageInspector } from './LineageInspector';
+import { InternetMap } from './InternetMap';
 import { PixelFolder, PixelGear, PixelChip, PixelShield, PixelChart, WindowCloseBox, WindowZoomBox, AgentIcon } from './CoplandIcons';
 import { Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGasTown } from '../context/GasTownContext';
