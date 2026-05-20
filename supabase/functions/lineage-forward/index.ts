@@ -75,6 +75,9 @@ Deno.serve(async (req) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // OpenLineage HttpTransport sends api_key as Bearer; Datadog intake
+          // also accepts DD-API-KEY. Send both for maximum compatibility.
+          'Authorization': `Bearer ${apiKey}`,
           'DD-API-KEY': apiKey,
         },
         body: JSON.stringify(event),
